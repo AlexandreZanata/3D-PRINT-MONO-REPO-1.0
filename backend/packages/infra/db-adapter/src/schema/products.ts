@@ -10,10 +10,10 @@ import {
 } from "drizzle-orm/pg-core";
 
 /**
- * Custom UUIDv7 default — calls the pg_uuidv7 extension function.
- * The extension must be enabled via the bootstrap migration.
+ * Native PostgreSQL 18.1+ UUIDv7 default.
+ * Uses gen_random_uuid_v7() built-in function (no extension required).
  */
-const uuidv7Default = sql`uuid_generate_v7()`;
+const uuidv7Default = sql`gen_random_uuid_v7()`;
 
 export const productsTable = pgTable("products", {
   id: uuid("id").primaryKey().default(uuidv7Default),

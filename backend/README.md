@@ -7,7 +7,7 @@ Production-ready e-commerce backend monorepo.
 - **Runtime**: Node.js 22
 - **Language**: TypeScript (strict)
 - **Monorepo**: pnpm workspaces + Turborepo
-- **Database**: PostgreSQL 16 + Drizzle ORM + UUIDv7
+- **Database**: PostgreSQL 18.1+ + Drizzle ORM + native UUIDv7
 - **Cache / Session**: Redis 7 + ioredis
 - **Queue**: RabbitMQ 3.13 + amqplib
 - **HTTP**: Express

@@ -3,7 +3,8 @@ import { sql } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { adminsTable } from "./admins.js";
 
-const uuidv7Default = sql`uuid_generate_v7()`;
+/** Native PostgreSQL 18.1+ UUIDv7 (no extension required). */
+const uuidv7Default = sql`gen_random_uuid_v7()`;
 
 export const refreshTokensTable = pgTable("refresh_tokens", {
   id: uuid("id").primaryKey().default(uuidv7Default),

@@ -2,7 +2,8 @@
 import { sql } from "drizzle-orm";
 import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-const uuidv7Default = sql`uuid_generate_v7()`;
+/** Native PostgreSQL 18.1+ UUIDv7 (no extension required). */
+const uuidv7Default = sql`gen_random_uuid_v7()`;
 
 export const adminRoleEnum = pgEnum("admin_role", ["admin", "super_admin"]);
 
