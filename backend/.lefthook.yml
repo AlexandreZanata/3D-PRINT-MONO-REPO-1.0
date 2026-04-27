@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: false
+  commands:
+    lint:
+      run: pnpm biome check .
+    typecheck:
+      run: pnpm turbo typecheck
+    test:
+      run: pnpm turbo test -- --passWithNoTests
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit {1}

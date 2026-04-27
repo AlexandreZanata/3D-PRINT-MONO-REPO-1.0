@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "incremental": true,
+    "paths": {
+      "@repo/domain": ["./packages/domain/src/index.ts"],
+      "@repo/application": ["./packages/application/src/index.ts"],
+      "@repo/contracts": ["./packages/contracts/src/index.ts"],
+      "@repo/utils": ["./packages/utils/src/index.ts"],
+      "@repo/db-adapter": ["./packages/infra/db-adapter/src/index.ts"],
+      "@repo/cache-adapter": ["./packages/infra/cache-adapter/src/index.ts"],
+      "@repo/queue-adapter": ["./packages/infra/queue-adapter/src/index.ts"],
+      "@repo/sse-adapter": ["./packages/infra/sse-adapter/src/index.ts"]
+    }
+  }
+}

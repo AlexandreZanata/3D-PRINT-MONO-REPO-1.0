@@ -1,0 +1,29 @@
+{
+  "name": "@repo/product-service",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --watch dist/index.js",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/application": "workspace:*",
+    "@repo/contracts": "workspace:*",
+    "@repo/db-adapter": "workspace:*",
+    "@repo/cache-adapter": "workspace:*",
+    "@repo/queue-adapter": "workspace:*",
+    "@repo/sse-adapter": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "express": "4.21.2",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.0",
+    "@types/node": "22.10.7",
+    "vitest": "2.1.8"
+  }
+}

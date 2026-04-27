@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/application" },
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/infra/db-adapter" },
+    { "path": "../../packages/infra/cache-adapter" },
+    { "path": "../../packages/infra/queue-adapter" },
+    { "path": "../../packages/infra/sse-adapter" },
+    { "path": "../../packages/utils" }
+  ]
+}

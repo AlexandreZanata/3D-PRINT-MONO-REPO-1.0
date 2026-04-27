@@ -1,0 +1,26 @@
+{
+  "name": "@repo/sse-adapter",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "vitest": "2.1.8"
+  }
+}
