@@ -1,5 +1,6 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { UserConfig } from "@commitlint/types";
+// @commitlint/types is a peer of @commitlint/cli v20
 
 const config: UserConfig = {
   extends: ["@commitlint/config-conventional"],
