@@ -1,5 +1,7 @@
 import { httpClient } from "./httpClient";
 import { ENDPOINTS } from "./endpoints";
+import { toSession } from "@/facades/AuthFacade";
+import type { ApiLoginResponse } from "@/facades/AuthFacade";
 import type { Session, LoginCredentials } from "@/features/auth/types";
 
 interface ApiEnvelope<T> {
@@ -13,25 +15,15 @@ interface TokenPair {
 }
 
 /**
- * Logs in an admin user. Returns a Session with accessToken and adminUser.
- * The refreshToken is set as an HttpOnly cookie by the backend automatically.
+ * Logs in an admin user.
+ * Calls AuthFacade.toSession to extract adminUser from the JWT payload.
  */
 export async function login(credentials: LoginCredentials): Promise<Session> {
-  const { data } = await httpClient.post<ApiEnvelope<TokenPair>>(
+  const { data } = await httpClient.post<ApiLoginResponse>(
     ENDPOINTS.AUTH_LOGIN,
     credentials,
   );
-  // Decode the JWT payload to extract adminUser fields
-  // The payload is base64url-encoded — no signature verification needed client-side
-  const parts = data.data.accessToken.split(".");
-  const payloadPart = parts[1];
-  if (!payloadPart) throw new Error("Invalid access token format");
-  const payload = JSON.parse(atob(payloadPart)) as { sub: string; role: string };
-
-  return {
-    accessToken: data.data.accessToken,
-    adminUser: { id: payload.sub, email: credentials.email, role: payload.role },
-  };
+  return toSession(data, credentials.email);
 }
 
 /**

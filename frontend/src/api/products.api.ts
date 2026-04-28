@@ -1,5 +1,7 @@
 import { httpClient } from "./httpClient";
 import { ENDPOINTS } from "./endpoints";
+import { toProduct, toProductList, toWhatsappUrl } from "@/facades/ProductFacade";
+import type { ApiProduct, ApiWhatsappResponse } from "@/facades/ProductFacade";
 import type { Product, ProductList, ProductFilters, WhatsappLink } from "@/features/products/types";
 
 interface ApiEnvelope<T> {
@@ -10,10 +12,10 @@ interface ApiEnvelope<T> {
 
 /**
  * Fetches the paginated public product list.
- * Returns a mapped ProductList — never the raw API shape.
+ * Calls ProductFacade.toProductList before returning — hooks receive domain types only.
  */
 export async function fetchProducts(filters: ProductFilters = {}): Promise<ProductList> {
-  const { data } = await httpClient.get<ApiEnvelope<Product[]>>(ENDPOINTS.PRODUCTS_LIST, {
+  const { data } = await httpClient.get<ApiEnvelope<ApiProduct[]>>(ENDPOINTS.PRODUCTS_LIST, {
     params: {
       page: filters.page ?? 1,
       limit: filters.limit ?? 20,
@@ -23,20 +25,21 @@ export async function fetchProducts(filters: ProductFilters = {}): Promise<Produ
       ...(filters.isActive !== undefined && { is_active: filters.isActive }),
     },
   });
-  return {
+  return toProductList({
     items: data.data,
     page: data.meta?.page ?? 1,
     limit: data.meta?.limit ?? 20,
     total: data.meta?.total ?? 0,
-  };
+  });
 }
 
 /**
  * Fetches a single product by ID.
+ * Calls ProductFacade.toProduct before returning.
  */
 export async function fetchProductById(id: string): Promise<Product> {
-  const { data } = await httpClient.get<ApiEnvelope<Product>>(ENDPOINTS.PRODUCT_BY_ID(id));
-  return data.data;
+  const { data } = await httpClient.get<ApiEnvelope<ApiProduct>>(ENDPOINTS.PRODUCT_BY_ID(id));
+  return toProduct(data.data);
 }
 
 /**
@@ -44,8 +47,8 @@ export async function fetchProductById(id: string): Promise<Product> {
  * Always delegates to the backend — never constructs the URL client-side.
  */
 export async function fetchWhatsappLink(id: string): Promise<WhatsappLink> {
-  const { data } = await httpClient.get<ApiEnvelope<WhatsappLink>>(
+  const { data } = await httpClient.get<ApiEnvelope<ApiWhatsappResponse>>(
     ENDPOINTS.PRODUCT_WHATSAPP(id),
   );
-  return data.data;
+  return { url: toWhatsappUrl(data.data) };
 }
