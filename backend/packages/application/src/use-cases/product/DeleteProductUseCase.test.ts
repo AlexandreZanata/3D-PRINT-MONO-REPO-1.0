@@ -1,0 +1,85 @@
+// @max-lines 200 — this is enforced by the lint pipeline.
+import { Product } from "@repo/domain";
+import { InfraError } from "@repo/utils";
+import { err, ok } from "@repo/utils";
+import { describe, expect, it, vi } from "vitest";
+import { DeleteProductUseCase } from "./DeleteProductUseCase.js";
+
+const makeProduct = () =>
+  Product.create({
+    id: "prod-1",
+    name: "Vase",
+    description: "A vase",
+    price: 49.99,
+    stock: 10,
+    whatsappNumber: "+5511999999999",
+  });
+
+const mockRepo = {
+  findById: vi.fn(),
+  findAll: vi.fn(),
+  save: vi.fn(),
+  update: vi.fn(),
+  softDelete: vi.fn().mockResolvedValue(ok(undefined)),
+};
+
+describe("DeleteProductUseCase", () => {
+  it("should return ok(undefined) when product is soft-deleted successfully", async () => {
+    mockRepo.findById.mockResolvedValue(ok(makeProduct()));
+    const useCase = new DeleteProductUseCase(mockRepo);
+
+    const result = await useCase.execute("prod-1");
+
+    expect(result.ok).toBe(true);
+    expect(mockRepo.softDelete).toHaveBeenCalledWith("prod-1");
+  });
+
+  it("should return NotFoundError when product does not exist", async () => {
+    mockRepo.findById.mockResolvedValue(ok(null));
+    const useCase = new DeleteProductUseCase(mockRepo);
+
+    const result = await useCase.execute("missing-id");
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.message).toContain("not found");
+    }
+  });
+
+  it("should not call softDelete when product is not found", async () => {
+    mockRepo.findById.mockResolvedValue(ok(null));
+    mockRepo.softDelete.mockClear();
+    const useCase = new DeleteProductUseCase(mockRepo);
+
+    await useCase.execute("missing-id");
+
+    expect(mockRepo.softDelete).not.toHaveBeenCalled();
+  });
+
+  it("should propagate InfraError from repository findById", async () => {
+    const infraErr = new InfraError("DB down", new Error("ECONNREFUSED"), "DB_ERROR");
+    mockRepo.findById.mockResolvedValue(err(infraErr));
+    const useCase = new DeleteProductUseCase(mockRepo);
+
+    const result = await useCase.execute("prod-1");
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe(infraErr);
+    }
+  });
+
+  it("should propagate InfraError from repository softDelete", async () => {
+    mockRepo.findById.mockResolvedValue(ok(makeProduct()));
+    const infraErr = new InfraError("DB down", new Error("ECONNREFUSED"), "DB_ERROR");
+    mockRepo.softDelete.mockResolvedValue(err(infraErr));
+    const useCase = new DeleteProductUseCase(mockRepo);
+
+    const result = await useCase.execute("prod-1");
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe(infraErr);
+    }
+  });
+});
