@@ -1,0 +1,35 @@
+/**
+ * Design tokens — all values are CSS custom properties.
+ * Imported by globals.css. Tailwind theme.extend maps these via tailwind.config.ts.
+ */
+:root {
+  /* ── Colors ──────────────────────────────────────────────────────────────── */
+  --color-primary:        oklch(0.18 0.005 50);
+  --color-primary-hover:  oklch(0.28 0.005 50);
+  --color-danger:         oklch(0.55 0.18 25);
+  --color-success:        oklch(0.55 0.15 145);
+  --color-warning:        oklch(0.75 0.15 75);
+
+  --color-bg-page:        oklch(0.975 0.006 80);
+  --color-bg-surface:     oklch(0.955 0.008 80);
+
+  --color-text-primary:   oklch(0.18 0.005 50);
+  --color-text-muted:     oklch(0.45 0.008 60);
+
+  /* ── Radii ───────────────────────────────────────────────────────────────── */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+
+  /* ── Shadows ─────────────────────────────────────────────────────────────── */
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px oklch(0 0 0 / 0.06);
+}
+
+.dark {
+  --color-primary:        oklch(0.95 0.005 80);
+  --color-primary-hover:  oklch(0.85 0.005 80);
+  --color-bg-page:        oklch(0.14 0.005 60);
+  --color-bg-surface:     oklch(0.18 0.005 60);
+  --color-text-primary:   oklch(0.95 0.005 80);
+  --color-text-muted:     oklch(0.7 0.008 70);
+}
