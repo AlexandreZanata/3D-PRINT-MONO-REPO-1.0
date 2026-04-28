@@ -30,10 +30,10 @@ async function seed() {
     role: "admin",
   });
   const adminResult = await adminRepo.save(admin);
-  if (!adminResult.ok) {
-    logger.error({ error: adminResult.error }, "failed to seed admin");
-  } else {
+  if (adminResult.ok) {
     logger.info({ email: admin.email.value }, "seeded admin");
+  } else {
+    logger.error({ error: adminResult.error.message }, "failed to seed admin");
   }
 
   // Seed products
@@ -60,10 +60,10 @@ async function seed() {
   for (const p of products) {
     const product = Product.create(p);
     const result = await productRepo.save(product);
-    if (!result.ok) {
-      logger.error({ error: result.error, name: p.name }, "failed to seed product");
-    } else {
+    if (result.ok) {
       logger.info({ name: p.name }, "seeded product");
+    } else {
+      logger.error({ error: result.error.message, name: p.name }, "failed to seed product");
     }
   }
 

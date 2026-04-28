@@ -4,7 +4,7 @@ import { InfraError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import { eq } from "drizzle-orm";
 import type { DbClient } from "../client.js";
-import { refreshTokensTable } from "../schema";
+import { refreshTokensTable } from "../schema/index.js";
 
 export class DrizzleRefreshTokenRepository implements IRefreshTokenRepository {
   constructor(private readonly db: DbClient) {}
@@ -39,11 +39,11 @@ export class DrizzleRefreshTokenRepository implements IRefreshTokenRepository {
     try {
       await this.db.insert(refreshTokensTable).values({
         id: record.id,
-        admin_id: record.adminId,
-        token_hash: record.tokenHash,
-        family_id: record.familyId,
-        expires_at: record.expiresAt,
-        revoked_at: record.revokedAt,
+        adminId: record.adminId,
+        tokenHash: record.tokenHash,
+        familyId: record.familyId,
+        expiresAt: record.expiresAt,
+        revokedAt: record.revokedAt,
       });
       return ok(undefined);
     } catch (e) {
@@ -55,7 +55,7 @@ export class DrizzleRefreshTokenRepository implements IRefreshTokenRepository {
     try {
       await this.db
         .update(refreshTokensTable)
-        .set({ revoked_at: at })
+        .set({ revokedAt: at })
         .where(eq(refreshTokensTable.id, id));
       return ok(undefined);
     } catch (e) {
@@ -67,7 +67,7 @@ export class DrizzleRefreshTokenRepository implements IRefreshTokenRepository {
     try {
       await this.db
         .update(refreshTokensTable)
-        .set({ revoked_at: at })
+        .set({ revokedAt: at })
         .where(eq(refreshTokensTable.familyId, familyId));
       return ok(undefined);
     } catch (e) {

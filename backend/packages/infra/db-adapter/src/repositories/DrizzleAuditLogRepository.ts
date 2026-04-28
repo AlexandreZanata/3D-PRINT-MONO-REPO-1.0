@@ -13,14 +13,14 @@ export class DrizzleAuditLogRepository implements IAuditLogRepository {
     try {
       await this.db.insert(auditLogsTable).values({
         id: record.id,
-        admin_id: record.adminId,
+        adminId: record.adminId,
         action: record.action,
         entity: record.entity,
-        entity_id: record.entityId,
+        entityId: record.entityId,
         payload: record.payload,
         ip: record.ip,
         ua: record.ua,
-        created_at: record.createdAt,
+        createdAt: record.createdAt,
       });
       return ok(undefined);
     } catch (e) {

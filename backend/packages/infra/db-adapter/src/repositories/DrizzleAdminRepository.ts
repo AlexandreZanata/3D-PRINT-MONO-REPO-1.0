@@ -4,7 +4,7 @@ import { InfraError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import { eq } from "drizzle-orm";
 import type { DbClient } from "../client.js";
-import { adminsTable } from "../schema";
+import { adminsTable } from "../schema/index.js";
 import { toAdminEntity } from "./mappers.js";
 
 export class DrizzleAdminRepository implements IAdminRepository {
@@ -39,10 +39,10 @@ export class DrizzleAdminRepository implements IAdminRepository {
       await this.db.insert(adminsTable).values({
         id: admin.id,
         email: admin.email.value,
-        password_hash: admin.passwordHash,
+        passwordHash: admin.passwordHash,
         role: admin.role,
-        created_at: admin.createdAt,
-        last_login_at: admin.lastLoginAt,
+        createdAt: admin.createdAt,
+        lastLoginAt: admin.lastLoginAt,
       });
       return ok(undefined);
     } catch (e) {
@@ -52,7 +52,7 @@ export class DrizzleAdminRepository implements IAdminRepository {
 
   async updateLastLogin(id: string, at: Date): Promise<Result<void, InfraError>> {
     try {
-      await this.db.update(adminsTable).set({ last_login_at: at }).where(eq(adminsTable.id, id));
+      await this.db.update(adminsTable).set({ lastLoginAt: at }).where(eq(adminsTable.id, id));
       return ok(undefined);
     } catch (e) {
       return err(new InfraError("updateLastLogin failed", toError(e), "DB_ERROR"));

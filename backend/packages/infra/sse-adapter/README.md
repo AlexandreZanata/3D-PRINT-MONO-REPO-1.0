@@ -11,13 +11,30 @@ typed product events to all connected clients. Sends a heartbeat comment every
 ## Public API
 
 ### Class
-- `SSEManager` — singleton-style manager
+- `SSEManager` — manages all SSE connections and broadcasts
 
 ### Methods
-- `SSEManager.addConnection(id, res)` — registers a new SSE client
-- `SSEManager.removeConnection(id)` — removes a disconnected client
-- `SSEManager.broadcast(eventType, payload)` — sends event to all clients
-- `SSEManager.connectionCount()` — returns current active connection count
+- `addConnection(id, res)` — registers a new SSE client (returns false if max reached)
+- `removeConnection(id)` — removes a disconnected client
+- `broadcast(eventType, payload)` — sends event to all clients
+- `connectionCount()` — returns current active connection count
+- `close()` — closes all connections and stops heartbeat
+
+### Types
+- `SSEEventType` — `"product.created" | "product.updated" | "product.deleted"`
+- `SSEEventPayload` — event data structure
+- `SSEConnection` — connection metadata
+- `SSEManagerConfig` — configuration options
+
+## Event Format
+
+```
+event: product.created
+data: {"productId":"...","name":"...","price":49.99,"eventId":"...","occurredAt":"..."}
+id: <eventId>
+retry: 3000
+
+```
 
 ## How to run tests
 

@@ -4,7 +4,7 @@ import { Product } from "@repo/domain";
 import { EmailVO } from "@repo/domain";
 import { PriceVO } from "@repo/domain";
 import { WhatsAppNumberVO } from "@repo/domain";
-import type { AdminSelectModel, ProductSelectModel } from "../schema";
+import type { AdminSelectModel, ProductSelectModel } from "../schema/index.js";
 
 /** Maps a Drizzle product row to the Product domain entity. */
 export function toProductEntity(row: ProductSelectModel): Product {

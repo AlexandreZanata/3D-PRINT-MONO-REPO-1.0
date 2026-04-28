@@ -5,7 +5,7 @@ import { InfraError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import { and, count, eq, gte, ilike, isNull, lte } from "drizzle-orm";
 import type { DbClient } from "../client.js";
-import { productsTable } from "../schema";
+import { productsTable } from "../schema/index.js";
 import { toProductEntity } from "./mappers.js";
 
 export class DrizzleProductRepository implements IProductRepository {
@@ -62,11 +62,11 @@ export class DrizzleProductRepository implements IProductRepository {
         description: product.description,
         price: product.price.value.toString(),
         stock: product.stock.toString(),
-        whatsapp_number: product.whatsappNumber.value,
-        image_url: product.imageUrl,
-        is_active: product.isActive,
-        created_at: product.createdAt,
-        updated_at: product.updatedAt,
+        whatsappNumber: product.whatsappNumber.value,
+        imageUrl: product.imageUrl,
+        isActive: product.isActive,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
       });
       return ok(undefined);
     } catch (e) {
@@ -83,10 +83,10 @@ export class DrizzleProductRepository implements IProductRepository {
           description: product.description,
           price: product.price.value.toString(),
           stock: product.stock.toString(),
-          whatsapp_number: product.whatsappNumber.value,
-          image_url: product.imageUrl,
-          is_active: product.isActive,
-          updated_at: new Date(),
+          whatsappNumber: product.whatsappNumber.value,
+          imageUrl: product.imageUrl,
+          isActive: product.isActive,
+          updatedAt: new Date(),
         })
         .where(eq(productsTable.id, product.id));
       return ok(undefined);
@@ -99,7 +99,7 @@ export class DrizzleProductRepository implements IProductRepository {
     try {
       await this.db
         .update(productsTable)
-        .set({ deleted_at: new Date(), is_active: false, updated_at: new Date() })
+        .set({ deletedAt: new Date(), isActive: false, updatedAt: new Date() })
         .where(eq(productsTable.id, id));
       return ok(undefined);
     } catch (e) {
