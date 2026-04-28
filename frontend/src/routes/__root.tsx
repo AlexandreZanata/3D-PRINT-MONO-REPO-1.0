@@ -1,7 +1,7 @@
-// Updated to use new atomic design structure paths
+// Updated to use atomic design structure and AppProviders (Section 6)
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import appCss from "../styles/globals.css?url";
-import { CartProvider } from "@/features/cart/CartProvider";
+import { AppProviders } from "@/AppProviders";
 import { SiteHeader } from "@/organisms/SiteHeader/SiteHeader";
 import { MobileTabBar } from "@/organisms/MobileTabBar/MobileTabBar";
 
@@ -37,7 +37,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Forma designs and 3D prints sculptural objects for the home — vases, lighting, tableware, and more. Made to order, made to last.",
+          "Forma designs and 3D prints sculptural objects for the home. Made to order, made to last.",
       },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
@@ -63,7 +63,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   return (
-    <CartProvider>
+    <AppProviders>
       <div className="min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1 pb-20 md:pb-0">
@@ -71,6 +71,6 @@ function RootComponent() {
         </main>
         <MobileTabBar />
       </div>
-    </CartProvider>
+    </AppProviders>
   );
 }
