@@ -15,7 +15,9 @@ import { ENDPOINTS } from "./endpoints";
  * - Never logs token values
  */
 export const httpClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000",
+  // Empty baseURL means requests use the same origin — Vite dev proxy forwards /api/* to the backend.
+  // In production, nginx handles the proxy (see nginx.conf).
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });

@@ -1,9 +1,10 @@
-/* MIGRATED FROM: src/styles.css — moved to styles/globals.css to comply with folder structure */
 @import "tailwindcss" source(none);
-@source "../src";
+@source "..";
 @import "tw-animate-css";
 
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&display=swap");
+/* Google Fonts loaded via <link> in __root.tsx head() — not here,
+   because @import url() after @import "tailwindcss" violates PostCSS ordering rules
+   once Tailwind v4 generates @layer properties before this line. */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -130,6 +131,10 @@
   .snap-center { scroll-snap-align: center; }
   .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0.5rem); }
 
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   @keyframes fade-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -138,6 +143,12 @@
     from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
   }
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fade-in 0.5s var(--ease-out-soft) both; }
   .animate-fade-up { animation: fade-up 0.7s var(--ease-out-soft) both; }
   .animate-scale-in { animation: scale-in 0.35s var(--ease-out-soft) both; }
+  .animate-slide-up { animation: slide-up 0.35s var(--ease-out-soft) both; }
 }

@@ -1,9 +1,15 @@
-// Updated to use atomic design structure and AppProviders (Section 6)
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import appCss from "../styles/globals.css?url";
+// Import CSS normally — TanStack Start's dev-server plugin crawls the module
+// graph and collects all CSS imports into /@tanstack-start/styles.css, which
+// is injected as a <link rel="stylesheet"> in the SSR HTML. This is the
+// correct pattern: no ?url, no virtual modules, no FOUC.
+import "../styles/globals.css";
 import { AppProviders } from "@/AppProviders";
 import { SiteHeader } from "@/organisms/SiteHeader/SiteHeader";
 import { MobileTabBar } from "@/organisms/MobileTabBar/MobileTabBar";
+
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&display=swap";
 
 function NotFoundComponent() {
   return (
@@ -40,7 +46,14 @@ export const Route = createRootRoute({
           "Forma designs and 3D prints sculptural objects for the home. Made to order, made to last.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      // Preconnect for faster font loading
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      // Google Fonts — loaded via <link> because globals.css uses @import "tailwindcss"
+      // which must come first; adding @import url() after it violates PostCSS ordering.
+      { rel: "stylesheet", href: GOOGLE_FONTS_URL },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

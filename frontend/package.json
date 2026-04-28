@@ -1,7 +1,7 @@
 {
   "name": "@repo/frontend",
   "private": true,
-  "sideEffects": false,
+  "sideEffects": ["**/*.css"],
   "type": "module",
   "scripts": {
     "dev": "vite dev",

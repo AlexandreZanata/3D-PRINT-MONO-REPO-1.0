@@ -2,7 +2,6 @@ import { useEffect, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CartProvider } from "@/features/cart/CartProvider";
 import { initHttpClient } from "@/api/httpClient";
-import { refreshToken } from "@/api/auth.api";
 import { useAuthStore } from "@/store/authStore";
 
 /**
@@ -37,36 +36,21 @@ function useHttpClientInit(): void {
   }, []);
 }
 
-/**
- * Attempts a silent token refresh on app startup.
- * Restores the session from the HttpOnly refresh-token cookie if present.
- * Silently fails if no cookie exists — user stays unauthenticated.
- */
-function useSilentRefresh(): void {
-  const setAccessToken = useAuthStore((s) => s.setAccessToken);
-
-  useEffect(() => {
-    refreshToken()
-      .then((token) => setAccessToken(token))
-      .catch(() => {
-        // No valid cookie — user is not authenticated, nothing to do
-      });
-  // Run once on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-}
-
 interface AppProvidersProps {
   children: ReactNode;
 }
 
 /**
  * Root provider tree — wraps the entire app.
- * Order matters: QueryClientProvider must wrap everything that uses React Query.
+ *
+ * NOTE: Silent token refresh is NOT done here on startup.
+ * Reason: it causes ECONNREFUSED proxy errors when the backend is not running,
+ * and it's unnecessary for public pages (catalog, shop, product detail).
+ * The admin routes handle their own auth check via beforeLoad guards.
+ * If you need session restoration, call refreshToken() inside the admin layout route.
  */
 export function AppProviders({ children }: AppProvidersProps) {
   useHttpClientInit();
-  useSilentRefresh();
 
   return (
     <QueryClientProvider client={queryClient}>
