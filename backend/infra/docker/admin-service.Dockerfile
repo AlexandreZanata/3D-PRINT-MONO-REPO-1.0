@@ -60,6 +60,9 @@ COPY --from=builder /repo/packages/infra/cache-adapter/dist ./packages/infra/cac
 
 WORKDIR /repo/apps/admin-service
 
+# Run as non-root user for security
+USER node
+
 ENV NODE_ENV=production
 
 EXPOSE 3002

@@ -70,6 +70,9 @@ COPY --from=builder /repo/packages/infra/sse-adapter/dist ./packages/infra/sse-a
 
 WORKDIR /repo/apps/product-service
 
+# Run as non-root user for security
+USER node
+
 ENV NODE_ENV=production
 
 EXPOSE 3001

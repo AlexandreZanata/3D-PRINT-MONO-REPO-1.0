@@ -49,6 +49,9 @@ COPY --from=builder /repo/packages/utils/dist ./packages/utils/dist
 
 WORKDIR /repo/apps/api-gateway
 
+# Run as non-root user for security
+USER node
+
 ENV NODE_ENV=production
 
 EXPOSE 3000

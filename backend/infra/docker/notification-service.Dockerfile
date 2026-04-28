@@ -60,6 +60,9 @@ COPY --from=builder /repo/packages/infra/queue-adapter/dist ./packages/infra/que
 
 WORKDIR /repo/apps/notification-service
 
+# Run as non-root user for security
+USER node
+
 ENV NODE_ENV=production
 
 EXPOSE 3003

@@ -1,0 +1,40 @@
+# Dependencies — reinstalled inside the image
+**/node_modules
+
+# Git history — not needed in the image
+.git
+.gitignore
+
+# Test files — excluded from production images
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+**/test/
+**/tests/
+
+# Documentation — not needed at runtime
+docs/
+**/*.md
+!**/package.json
+
+# Build artifacts that will be rebuilt inside the image
+**/dist/
+**/tsconfig.tsbuildinfo
+
+# Local environment files — secrets must come from env vars at runtime
+.env
+.env.*
+!.env.example
+
+# Editor and OS artifacts
+.idea/
+.vscode/
+*.DS_Store
+*.log
+
+# Turbo cache — not needed in the image
+**/.turbo/
+
+# CI artifacts
+coverage/
