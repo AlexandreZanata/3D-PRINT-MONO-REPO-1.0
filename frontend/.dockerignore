@@ -1,0 +1,28 @@
+# Dependencies — reinstalled inside the image
+node_modules
+
+# Git history
+.git
+.gitignore
+
+# Test files — not needed in production image
+**/*.test.ts
+**/*.test.tsx
+src/test/
+
+# Documentation
+*.md
+!package.json
+
+# Build artifacts (will be rebuilt)
+dist/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Editor artifacts
+.idea/
+.vscode/
+*.DS_Store
