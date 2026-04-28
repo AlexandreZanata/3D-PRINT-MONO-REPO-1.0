@@ -1,1 +1,0 @@
-{"version":3,"file":"UnauthorizedError.d.ts","sourceRoot":"","sources":["UnauthorizedError.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,QAAQ,EAAE,MAAM,eAAe,CAAC;AAEzC,oDAAoD;AACpD,qBAAa,iBAAkB,SAAQ,QAAQ;IAC7C,QAAQ,CAAC,IAAI,EAAE,MAAM,CAAC;IACtB,QAAQ,CAAC,UAAU,EAAG,GAAG,CAAU;gBAEvB,OAAO,EAAE,MAAM,EAAE,IAAI,SAAiB;CAInD"}

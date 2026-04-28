@@ -22,7 +22,7 @@ export type AppLogger = Logger;
 
 /**
  * Creates a Pino logger bound to a specific service name.
- * Every log entry includes `service` and `correlationId` fields.
+ * Every log entry includes `service`, `level`, and ISO `timestamp`.
  * Secrets matching /password|secret|token|key/i are redacted automatically.
  */
 export function createLogger(service: string): AppLogger {
@@ -37,4 +37,12 @@ export function createLogger(service: string): AppLogger {
       },
     },
   });
+}
+
+/**
+ * Returns a child logger with a correlationId bound to every log entry.
+ * Use this per-request so all logs for a single request share the same ID.
+ */
+export function withCorrelation(logger: AppLogger, correlationId: string): AppLogger {
+  return logger.child({ correlationId });
 }

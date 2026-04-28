@@ -1,42 +1,54 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
-// poc.ts — minimum working usage of @repo/utils
+// poc.ts — minimum working usage of @repo/utils (logger + http utilities)
 // Run: npx tsx poc.ts
+// Then: curl http://localhost:3200/health  and  curl http://localhost:3200/products
 
-import { createLogger } from "./src/logger.js";
-import { err, ok, type Result } from "./src/result.js";
+import express from "express";
+import { createLogger, withCorrelation } from "./src/logger.js";
 import {
-  ConflictError,
-  DomainError,
-  ForbiddenError,
-  InfraError,
-  NotFoundError,
-  UnauthorizedError,
-} from "./src/errors/index.js";
+  correlationIdMiddleware,
+  createErrorHandler,
+  createHealthHandler,
+  requestLogger,
+} from "./src/http/index.js";
+import { NotFoundError } from "./src/errors/index.js";
 
 const logger = createLogger("poc");
+const app = express();
 
-// ── Result type ──────────────────────────────────────────────────────────────
-function findUser(id: string): Result<{ id: string; name: string }, NotFoundError> {
-  if (id === "1") return ok({ id: "1", name: "Alice" });
-  return err(new NotFoundError(`User ${id} not found`));
-}
+// ── Middleware ────────────────────────────────────────────────────────────────
+app.use(correlationIdMiddleware);
+app.use(requestLogger(logger));
 
-const found = findUser("1");
-if (found.ok) logger.info({ user: found.value }, "user found");
+// ── Health endpoint ───────────────────────────────────────────────────────────
+app.get(
+  "/health",
+  createHealthHandler({
+    db: async () => "ok",
+    redis: async () => "ok",
+    rabbitmq: async () => "degraded", // Simulates a degraded dependency
+    version: "1.0.0",
+  }),
+);
 
-const missing = findUser("99");
-if (!missing.ok) logger.warn({ code: missing.error.code }, "user missing");
+// ── Demo: correlation ID in logs ──────────────────────────────────────────────
+app.get("/products", (req, res) => {
+  const correlationId = res.locals["correlationId"] as string;
+  const log = withCorrelation(logger, correlationId);
+  log.info("listing products");
+  res.json({ success: true, data: [] });
+});
 
-// ── Error hierarchy ───────────────────────────────────────────────────────────
-const errors = [
-  new DomainError("price must be positive"),
-  new NotFoundError("product not found"),
-  new UnauthorizedError("token expired"),
-  new ForbiddenError("admin only"),
-  new ConflictError("email taken"),
-  new InfraError("db down", new Error("ECONNREFUSED")),
-];
+// ── Demo: AppError mapping ────────────────────────────────────────────────────
+app.get("/products/:id", (_req, _res, next) => {
+  next(new NotFoundError("Product not found", "PRODUCT_NOT_FOUND"));
+});
 
-for (const e of errors) {
-  logger.info({ code: e.code, status: e.httpStatus }, e.message);
-}
+// ── Global error handler (must be last) ──────────────────────────────────────
+app.use(createErrorHandler(logger));
+
+app.listen(3200, () => {
+  logger.info("POC server listening on http://localhost:3200");
+  logger.info("Try: curl http://localhost:3200/health");
+  logger.info("Try: curl http://localhost:3200/products/missing");
+});
