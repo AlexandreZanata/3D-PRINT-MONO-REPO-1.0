@@ -1,12 +1,12 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { describe, expect, it } from "vitest";
 import { AppError } from "./AppError.js";
-import { ConflictError } from "@repo/utils";
-import { DomainError } from "@repo/utils";
-import { ForbiddenError } from "@repo/utils";
-import { InfraError } from "@repo/utils";
-import { NotFoundError } from "@repo/utils";
-import { UnauthorizedError } from "@repo/utils";
+import { ConflictError } from "./ConflictError.js";
+import { DomainError } from "./DomainError.js";
+import { ForbiddenError } from "./ForbiddenError.js";
+import { InfraError } from "./InfraError.js";
+import { NotFoundError } from "./NotFoundError.js";
+import { UnauthorizedError } from "./UnauthorizedError.js";
 
 describe("DomainError", () => {
   it("should have httpStatus 400 and default code", () => {

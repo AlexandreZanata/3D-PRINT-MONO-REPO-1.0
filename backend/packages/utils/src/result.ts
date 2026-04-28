@@ -14,6 +14,6 @@ export function ok<T>(value: T): Result<T, never> {
 }
 
 /** Construct a failure result. */
-export function err<E>(error: E): Result<never, E> {
+export function err<T, E>(error: E): Result<T, E> {
   return { ok: false, error };
 }
