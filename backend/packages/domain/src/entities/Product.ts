@@ -55,15 +55,37 @@ export class Product {
     return new Product(props);
   }
 
-  get id(): string { return this.props.id; }
-  get name(): string { return this.props.name; }
-  get description(): string { return this.props.description; }
-  get price(): PriceVO { return this.props.price; }
-  get stock(): number { return this.props.stock; }
-  get whatsappNumber(): WhatsAppNumberVO { return this.props.whatsappNumber; }
-  get imageUrl(): string | null { return this.props.imageUrl; }
-  get isActive(): boolean { return this.props.isActive; }
-  get createdAt(): Date { return this.props.createdAt; }
-  get updatedAt(): Date { return this.props.updatedAt; }
-  get deletedAt(): Date | null { return this.props.deletedAt; }
+  get id(): string {
+    return this.props.id;
+  }
+  get name(): string {
+    return this.props.name;
+  }
+  get description(): string {
+    return this.props.description;
+  }
+  get price(): PriceVO {
+    return this.props.price;
+  }
+  get stock(): number {
+    return this.props.stock;
+  }
+  get whatsappNumber(): WhatsAppNumberVO {
+    return this.props.whatsappNumber;
+  }
+  get imageUrl(): string | null {
+    return this.props.imageUrl;
+  }
+  get isActive(): boolean {
+    return this.props.isActive;
+  }
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+  get deletedAt(): Date | null {
+    return this.props.deletedAt;
+  }
 }

@@ -2,12 +2,12 @@
 import type { CreateProductDTO, ListProductsQueryDTO, UpdateProductDTO } from "@repo/contracts";
 import type { Result } from "@repo/utils";
 import type { ProductDTO } from "../dtos/ProductDTO.js";
-import type { ListProductsResult } from "../use-cases/product/ListProductsUseCase.js";
-import type { WhatsAppLinkResult } from "../use-cases/product/GetWhatsAppLinkUseCase.js";
 import type { CreateProductUseCase } from "../use-cases/product/CreateProductUseCase.js";
 import type { DeleteProductUseCase } from "../use-cases/product/DeleteProductUseCase.js";
 import type { GetProductByIdUseCase } from "../use-cases/product/GetProductByIdUseCase.js";
+import type { WhatsAppLinkResult } from "../use-cases/product/GetWhatsAppLinkUseCase.js";
 import type { GetWhatsAppLinkUseCase } from "../use-cases/product/GetWhatsAppLinkUseCase.js";
+import type { ListProductsResult } from "../use-cases/product/ListProductsUseCase.js";
 import type { ListProductsUseCase } from "../use-cases/product/ListProductsUseCase.js";
 import type { UpdateProductUseCase } from "../use-cases/product/UpdateProductUseCase.js";
 

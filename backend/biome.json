@@ -34,12 +34,6 @@
     }
   },
   "files": {
-    "ignore": [
-      "node_modules",
-      "dist",
-      "coverage",
-      "*.lockb",
-      "migrations"
-    ]
+    "ignore": ["node_modules", "dist", "coverage", "*.lockb", "migrations", ".turbo", "**/.turbo"]
   }
 }

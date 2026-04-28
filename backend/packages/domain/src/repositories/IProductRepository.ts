@@ -1,6 +1,6 @@
+import type { Result } from "../common/Result.js";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { InfraError } from "../common/index.js";
-import type { Result } from "../common/Result.js";
 import type { Product } from "../entities/Product.js";
 
 export interface ProductFilters {

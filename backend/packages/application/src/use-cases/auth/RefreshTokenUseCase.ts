@@ -27,7 +27,9 @@ export class RefreshTokenUseCase {
       if (record !== null) {
         await this.deps.tokenRepo.revokeFamily(record.familyId, new Date());
       }
-      return err(new UnauthorizedError("Invalid or expired refresh token", "INVALID_REFRESH_TOKEN"));
+      return err(
+        new UnauthorizedError("Invalid or expired refresh token", "INVALID_REFRESH_TOKEN"),
+      );
     }
 
     await this.deps.tokenRepo.revoke(record.id, new Date());
@@ -42,9 +44,7 @@ export class RefreshTokenUseCase {
     const accessToken = this.deps.signAccessToken(admin.id, admin.role);
     const newRefreshToken = this.deps.generateRefreshToken();
     const newHash = this.deps.hashToken(newRefreshToken);
-    const expiresAt = new Date(
-      Date.now() + this.deps.refreshTokenTtlDays * 24 * 60 * 60 * 1000,
-    );
+    const expiresAt = new Date(Date.now() + this.deps.refreshTokenTtlDays * 24 * 60 * 60 * 1000);
 
     const saveResult = await this.deps.tokenRepo.save({
       id: this.deps.generateId(),

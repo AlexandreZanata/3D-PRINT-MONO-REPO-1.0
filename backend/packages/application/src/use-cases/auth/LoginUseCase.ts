@@ -1,6 +1,6 @@
+import type { LoginDTO } from "@repo/contracts";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { IAdminRepository, IRefreshTokenRepository } from "@repo/domain";
-import type { LoginDTO } from "@repo/contracts";
 import { UnauthorizedError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import type { TokenPairDTO } from "../../dtos/ProductDTO.js";
@@ -37,9 +37,7 @@ export class LoginUseCase {
     const refreshToken = this.deps.generateRefreshToken();
     const tokenHash = this.deps.hashToken(refreshToken);
     const familyId = this.deps.generateId();
-    const expiresAt = new Date(
-      Date.now() + this.deps.refreshTokenTtlDays * 24 * 60 * 60 * 1000,
-    );
+    const expiresAt = new Date(Date.now() + this.deps.refreshTokenTtlDays * 24 * 60 * 60 * 1000);
 
     const saveResult = await this.deps.tokenRepo.save({
       id: this.deps.generateId(),

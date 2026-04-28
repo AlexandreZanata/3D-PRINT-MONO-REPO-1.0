@@ -27,16 +27,19 @@ export function requestLogger(logger: AppLogger) {
     const ip = anonymiseIp(req.ip ?? req.socket.remoteAddress ?? "unknown");
 
     res.on("finish", () => {
-      const correlationId = res.locals["correlationId"] as string | undefined;
+      const correlationId = res.locals.correlationId as string | undefined;
       const log = correlationId ? logger.child({ correlationId }) : logger;
 
-      log.info({
-        method: req.method,
-        path: req.path,
-        statusCode: res.statusCode,
-        durationMs: Date.now() - startMs,
-        ip,
-      }, "http request");
+      log.info(
+        {
+          method: req.method,
+          path: req.path,
+          statusCode: res.statusCode,
+          durationMs: Date.now() - startMs,
+          ip,
+        },
+        "http request",
+      );
     });
 
     next();

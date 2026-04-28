@@ -1,6 +1,6 @@
+import type { ListProductsQueryDTO } from "@repo/contracts";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { IProductRepository, ProductFilters } from "@repo/domain";
-import type { ListProductsQueryDTO } from "@repo/contracts";
 import { type Result, err, ok } from "@repo/utils";
 import type { ProductDTO } from "../../dtos/ProductDTO.js";
 import { toProductDTO } from "../../mappers/product.mapper.js";
@@ -32,10 +32,10 @@ export class ListProductsUseCase {
   constructor(private readonly productRepo: IProductRepository) {}
 
   async execute(query: ListProductsQueryDTO): Promise<Result<ListProductsResult, Error>> {
-    const result = await this.productRepo.findAll(
-      buildFilters(query),
-      { page: query.page, limit: query.limit },
-    );
+    const result = await this.productRepo.findAll(buildFilters(query), {
+      page: query.page,
+      limit: query.limit,
+    });
 
     if (!result.ok) return err(result.error);
 

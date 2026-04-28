@@ -10,7 +10,9 @@ const makeReqRes = (existingHeader?: string) => {
   const locals: Record<string, unknown> = {};
   const res = {
     locals,
-    setHeader: vi.fn((k: string, v: string) => { headers[k] = v; }),
+    setHeader: vi.fn((k: string, v: string) => {
+      headers[k] = v;
+    }),
   };
   return { req, res, headers };
 };
@@ -23,9 +25,9 @@ describe("correlationIdMiddleware()", () => {
     correlationIdMiddleware(req as never, res as never, next);
 
     expect(next).toHaveBeenCalledOnce();
-    expect(typeof res.locals["correlationId"]).toBe("string");
-    expect(res.locals["correlationId"]).toHaveLength(36); // UUID v4 length
-    expect(headers[CORRELATION_HEADER]).toBe(res.locals["correlationId"]);
+    expect(typeof res.locals.correlationId).toBe("string");
+    expect(res.locals.correlationId).toHaveLength(36); // UUID v4 length
+    expect(headers[CORRELATION_HEADER]).toBe(res.locals.correlationId);
   });
 
   it("should reuse an existing correlation ID from the request header", () => {
@@ -35,7 +37,7 @@ describe("correlationIdMiddleware()", () => {
 
     correlationIdMiddleware(req as never, res as never, next);
 
-    expect(res.locals["correlationId"]).toBe(existingId);
+    expect(res.locals.correlationId).toBe(existingId);
   });
 
   it("should always call next()", () => {

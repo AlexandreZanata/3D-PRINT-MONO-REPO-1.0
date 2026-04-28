@@ -28,7 +28,7 @@ export type AppLogger = Logger;
 export function createLogger(service: string): AppLogger {
   return pino({
     name: service,
-    level: process.env["LOG_LEVEL"] ?? "info",
+    level: process.env.LOG_LEVEL ?? "info",
     redact: { paths: REDACT_PATHS, censor: "[REDACTED]" },
     timestamp: pino.stdTimeFunctions.isoTime,
     formatters: {

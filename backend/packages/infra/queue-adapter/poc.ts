@@ -7,7 +7,7 @@ import { QUEUES, ROUTING_KEYS, RabbitMQConsumer, RabbitMQPublisher } from "./src
 
 async function main() {
   const config = {
-    url: process.env["RABBITMQ_URL"] ?? "amqp://guest:guest@localhost:5672",
+    url: process.env.RABBITMQ_URL ?? "amqp://guest:guest@localhost:5672",
   };
 
   // ── Publisher ─────────────────────────────────────────────────────────────
@@ -25,24 +25,16 @@ async function main() {
   const publishResult = await publisher.publish(ROUTING_KEYS.PRODUCT_CREATED, message);
   if (!publishResult.ok) throw publishResult.error;
 
-  // biome-ignore lint/suspicious/noConsole: POC demonstration
-  console.log("Published message:", message.eventId);
-
   // ── Consumer ──────────────────────────────────────────────────────────────
   const consumer = new RabbitMQConsumer(config);
   const consumerConnectResult = await consumer.connect();
   if (!consumerConnectResult.ok) throw consumerConnectResult.error;
 
-  const subscribeResult = await consumer.subscribe(QUEUES.PRODUCT_CREATED, async (msg) => {
-    // biome-ignore lint/suspicious/noConsole: POC demonstration
-    console.log("Received message:", msg.eventType, msg.payload);
+  const subscribeResult = await consumer.subscribe(QUEUES.PRODUCT_CREATED, async (_msg) => {
     return ok(undefined); // Success
   });
 
   if (!subscribeResult.ok) throw subscribeResult.error;
-
-  // biome-ignore lint/suspicious/noConsole: POC demonstration
-  console.log("Consumer subscribed to", QUEUES.PRODUCT_CREATED);
 
   // Keep alive for 5 seconds to receive messages
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -52,7 +44,6 @@ async function main() {
 }
 
 main().catch((e) => {
-  // biome-ignore lint/suspicious/noConsole: POC error handling
   console.error("POC failed:", e);
   process.exit(1);
 });

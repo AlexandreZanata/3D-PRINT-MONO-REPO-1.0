@@ -1,7 +1,7 @@
+import type { UpdateProductDTO } from "@repo/contracts";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { IProductRepository } from "@repo/domain";
-import { Product, PriceVO, WhatsAppNumberVO } from "@repo/domain";
-import type { UpdateProductDTO } from "@repo/contracts";
+import { PriceVO, Product, WhatsAppNumberVO } from "@repo/domain";
 import { DomainError, NotFoundError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import type { ProductDTO } from "../../dtos/ProductDTO.js";

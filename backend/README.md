@@ -61,6 +61,23 @@ docs/
 | `make seed`      | Run seed script                      |
 | `make typecheck` | `tsc --noEmit` across all packages   |
 
+## Commit convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org) enforced
+by `commitlint` + `Lefthook`. Hooks are installed automatically on `pnpm install`.
+
+```
+<type>(<scope>): <subject>   # max 72 chars
+```
+
+Allowed types: `feat` `fix` `docs` `style` `refactor` `test` `chore` `perf` `ci` `revert`
+
+Scopes map to workspace package names (e.g. `api-gateway`, `domain`, `db-adapter`).
+
+Rule: no commit may touch more than 3 packages/apps at once (except `chore(deps)`).
+
+See [ADR-003](docs/adr/ADR-003-commit-convention.md) for the full rationale.
+
 ## Documentation
 
 - [Getting Started / Init Guide](docs/init.md)

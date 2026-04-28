@@ -1,6 +1,6 @@
+import type { Result } from "../common/Result.js";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { InfraError } from "../common/index.js";
-import type { Result } from "../common/Result.js";
 import type { PaginatedResult, PaginationOptions } from "./IProductRepository.js";
 
 export interface AuditLogRecord {
@@ -17,5 +17,7 @@ export interface AuditLogRecord {
 
 export interface IAuditLogRepository {
   save(record: AuditLogRecord): Promise<Result<void, InfraError>>;
-  findAll(pagination: PaginationOptions): Promise<Result<PaginatedResult<AuditLogRecord>, InfraError>>;
+  findAll(
+    pagination: PaginationOptions,
+  ): Promise<Result<PaginatedResult<AuditLogRecord>, InfraError>>;
 }

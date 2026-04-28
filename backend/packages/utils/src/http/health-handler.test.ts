@@ -30,7 +30,9 @@ describe("createHealthHandler()", () => {
     const body: unknown[] = [];
     return {
       status: vi.fn().mockReturnThis(),
-      json: vi.fn((b: unknown) => { body.push(b); }),
+      json: vi.fn((b: unknown) => {
+        body.push(b);
+      }),
       _body: body,
     };
   };
@@ -65,9 +67,7 @@ describe("createHealthHandler()", () => {
     await handler({} as never, res as never);
 
     expect(res.status).toHaveBeenCalledWith(503);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ status: "down" }),
-    );
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ status: "down" }));
   });
 
   it("should return 200 when status is 'degraded'", async () => {
@@ -82,8 +82,6 @@ describe("createHealthHandler()", () => {
     await handler({} as never, res as never);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ status: "degraded" }),
-    );
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ status: "degraded" }));
   });
 });

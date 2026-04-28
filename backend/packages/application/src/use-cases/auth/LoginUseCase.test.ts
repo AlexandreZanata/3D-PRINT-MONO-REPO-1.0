@@ -13,7 +13,9 @@ const makeAdmin = () =>
     role: "admin",
   });
 
-const makeDeps = (overrides: Partial<Parameters<typeof LoginUseCase.prototype.execute>[0]> = {}) => ({
+const makeDeps = (
+  _overrides: Partial<Parameters<typeof LoginUseCase.prototype.execute>[0]> = {},
+) => ({
   adminRepo: {
     findById: vi.fn(),
     findByEmail: vi.fn().mockResolvedValue(ok(makeAdmin())),

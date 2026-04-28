@@ -33,7 +33,13 @@ export class RabbitMQConsumer implements QueueConsumer {
 
   async subscribe(queue: string, handler: MessageHandler): Promise<Result<void, InfraError>> {
     if (!this.channel) {
-      return err(new InfraError("Channel not initialized", new Error("Call connect() first"), "RABBITMQ_ERROR"));
+      return err(
+        new InfraError(
+          "Channel not initialized",
+          new Error("Call connect() first"),
+          "RABBITMQ_ERROR",
+        ),
+      );
     }
 
     try {
@@ -47,7 +53,9 @@ export class RabbitMQConsumer implements QueueConsumer {
       );
       return ok(undefined);
     } catch (e) {
-      return err(new InfraError(`Subscribe failed for queue ${queue}`, toError(e), "RABBITMQ_ERROR"));
+      return err(
+        new InfraError(`Subscribe failed for queue ${queue}`, toError(e), "RABBITMQ_ERROR"),
+      );
     }
   }
 
@@ -72,7 +80,7 @@ export class RabbitMQConsumer implements QueueConsumer {
           this.channel.nack(msg, false, false);
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Parsing or unexpected error — NACK without requeue
       this.channel.nack(msg, false, false);
     }

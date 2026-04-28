@@ -1,13 +1,6 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { sql } from "drizzle-orm";
-import {
-  boolean,
-  numeric,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Native PostgreSQL 18.1+ UUIDv7 default.

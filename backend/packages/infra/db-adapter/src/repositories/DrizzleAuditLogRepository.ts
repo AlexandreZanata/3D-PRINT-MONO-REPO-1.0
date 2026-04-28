@@ -1,5 +1,10 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
-import type { AuditLogRecord, IAuditLogRepository, PaginatedResult, PaginationOptions } from "@repo/domain";
+import type {
+  AuditLogRecord,
+  IAuditLogRepository,
+  PaginatedResult,
+  PaginationOptions,
+} from "@repo/domain";
 import { InfraError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
 import { count, desc } from "drizzle-orm";

@@ -7,9 +7,7 @@ export const CreateProductSchema = z.object({
   description: z.string().min(1).max(2000).trim(),
   price: z.number().nonnegative(),
   stock: z.number().int().nonnegative(),
-  whatsappNumber: z
-    .string()
-    .regex(/^\+?\d{7,15}$/, "Must be a valid E.164 phone number"),
+  whatsappNumber: z.string().regex(/^\+?\d{7,15}$/, "Must be a valid E.164 phone number"),
   imageUrl: z.string().url().nullable().optional(),
 });
 

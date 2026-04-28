@@ -1,6 +1,6 @@
+import { EventEmitter } from "node:events";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { AppLogger } from "@repo/utils";
-import { EventEmitter } from "node:events";
 import type { SSEConnection, SSEEventPayload, SSEEventType } from "./types.js";
 
 export interface SSEManagerConfig {
@@ -57,7 +57,12 @@ export class SSEManager extends EventEmitter {
     });
 
     // Send initial connection confirmation
-    this.sendEvent(response, "connected", { connectionId: id, timestamp: new Date().toISOString() }, id);
+    this.sendEvent(
+      response,
+      "connected",
+      { connectionId: id, timestamp: new Date().toISOString() },
+      id,
+    );
 
     return true;
   }

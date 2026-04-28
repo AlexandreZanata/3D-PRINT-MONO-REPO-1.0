@@ -29,7 +29,13 @@ export class RabbitMQPublisher implements QueuePublisher {
 
   async publish(routingKey: string, message: QueueMessage): Promise<Result<void, InfraError>> {
     if (!this.channel) {
-      return err(new InfraError("Channel not initialized", new Error("Call connect() first"), "RABBITMQ_ERROR"));
+      return err(
+        new InfraError(
+          "Channel not initialized",
+          new Error("Call connect() first"),
+          "RABBITMQ_ERROR",
+        ),
+      );
     }
 
     try {
@@ -42,12 +48,24 @@ export class RabbitMQPublisher implements QueuePublisher {
       });
 
       if (!published) {
-        return err(new InfraError("Publish failed (buffer full)", new Error("Channel buffer full"), "RABBITMQ_ERROR"));
+        return err(
+          new InfraError(
+            "Publish failed (buffer full)",
+            new Error("Channel buffer full"),
+            "RABBITMQ_ERROR",
+          ),
+        );
       }
 
       return ok(undefined);
     } catch (e) {
-      return err(new InfraError(`Publish failed for routing key ${routingKey}`, toError(e), "RABBITMQ_ERROR"));
+      return err(
+        new InfraError(
+          `Publish failed for routing key ${routingKey}`,
+          toError(e),
+          "RABBITMQ_ERROR",
+        ),
+      );
     }
   }
 

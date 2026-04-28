@@ -1,5 +1,5 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
-import { Product, PriceVO, WhatsAppNumberVO } from "@repo/domain";
+import { Product } from "@repo/domain";
 import { InfraError } from "@repo/utils";
 import { err, ok } from "@repo/utils";
 import { describe, expect, it, vi } from "vitest";
@@ -26,9 +26,7 @@ const mockRepo = {
 describe("ListProductsUseCase", () => {
   it("should return paginated products on success", async () => {
     const product = makeProduct();
-    mockRepo.findAll.mockResolvedValue(
-      ok({ items: [product], total: 1, page: 1, limit: 20 }),
-    );
+    mockRepo.findAll.mockResolvedValue(ok({ items: [product], total: 1, page: 1, limit: 20 }));
 
     const useCase = new ListProductsUseCase(mockRepo);
     const result = await useCase.execute({ page: 1, limit: 20 });
@@ -42,9 +40,7 @@ describe("ListProductsUseCase", () => {
   });
 
   it("should return empty list when no products match filters", async () => {
-    mockRepo.findAll.mockResolvedValue(
-      ok({ items: [], total: 0, page: 1, limit: 20 }),
-    );
+    mockRepo.findAll.mockResolvedValue(ok({ items: [], total: 0, page: 1, limit: 20 }));
 
     const useCase = new ListProductsUseCase(mockRepo);
     const result = await useCase.execute({ page: 1, limit: 20, name: "nonexistent" });

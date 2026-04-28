@@ -1,6 +1,6 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { describe, expect, it } from "vitest";
-import { err, ok, type Result } from "./result.js";
+import { type Result, err, ok } from "./result.js";
 
 describe("ok()", () => {
   it("should return a success result with the given value", () => {

@@ -43,11 +43,7 @@ export function deriveOverallStatus(checks: HealthChecks): HealthStatus {
  */
 export function createHealthHandler(deps: HealthCheckDeps) {
   return async (_req: Request, res: Response): Promise<void> => {
-    const [db, redis, rabbitmq] = await Promise.all([
-      deps.db(),
-      deps.redis(),
-      deps.rabbitmq(),
-    ]);
+    const [db, redis, rabbitmq] = await Promise.all([deps.db(), deps.redis(), deps.rabbitmq()]);
 
     const checks: HealthChecks = { db, redis, rabbitmq };
     const status = deriveOverallStatus(checks);

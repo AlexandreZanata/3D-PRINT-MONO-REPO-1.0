@@ -1,7 +1,7 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { NextFunction, Request, Response } from "express";
-import type { AppLogger } from "../logger.js";
 import { AppError } from "../errors/AppError.js";
+import type { AppLogger } from "../logger.js";
 
 export interface ApiErrorBody {
   readonly success: false;
@@ -21,23 +21,18 @@ export function createErrorHandler(logger: AppLogger) {
   // Express error handlers must have exactly 4 parameters.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (err: unknown, req: Request, res: Response, _next: NextFunction): void => {
-    const correlationId = res.locals["correlationId"] as string | undefined;
+    const correlationId = res.locals.correlationId as string | undefined;
     const log = correlationId ? logger.child({ correlationId }) : logger;
 
     if (err instanceof AppError) {
-      log.warn(
-        { code: err.code, httpStatus: err.httpStatus, path: req.path },
-        err.message,
-      );
+      log.warn({ code: err.code, httpStatus: err.httpStatus, path: req.path }, err.message);
 
       const body: ApiErrorBody = {
         success: false,
         error: {
           code: err.code,
           message: err.message,
-          ...(process.env["NODE_ENV"] !== "production" && err.stack
-            ? { details: err.stack }
-            : {}),
+          ...(process.env.NODE_ENV !== "production" && err.stack ? { details: err.stack } : {}),
         },
       };
 
@@ -50,7 +45,7 @@ export function createErrorHandler(logger: AppLogger) {
     const stack = err instanceof Error ? err.stack : undefined;
 
     log.error(
-      { path: req.path, ...(process.env["NODE_ENV"] !== "production" ? { stack } : {}) },
+      { path: req.path, ...(process.env.NODE_ENV !== "production" ? { stack } : {}) },
       message,
     );
 
@@ -58,7 +53,7 @@ export function createErrorHandler(logger: AppLogger) {
       success: false,
       error: {
         code: "INTERNAL_ERROR",
-        message: process.env["NODE_ENV"] === "production" ? "Internal server error" : message,
+        message: process.env.NODE_ENV === "production" ? "Internal server error" : message,
       },
     };
 

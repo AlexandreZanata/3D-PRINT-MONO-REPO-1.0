@@ -15,9 +15,7 @@ export class WhatsAppNumberVO {
   static create(raw: string): WhatsAppNumberVO {
     const digits = raw.replace(/^\+/, "");
     if (!/^\d{7,15}$/.test(digits)) {
-      throw new Error(
-        `WhatsAppNumberVO: invalid number "${raw}" — must be 7–15 digits (E.164)`,
-      );
+      throw new Error(`WhatsAppNumberVO: invalid number "${raw}" — must be 7–15 digits (E.164)`);
     }
     return new WhatsAppNumberVO(digits);
   }

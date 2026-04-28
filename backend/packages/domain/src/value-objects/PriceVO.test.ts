@@ -18,11 +18,11 @@ describe("PriceVO.create()", () => {
   });
 
   it("should throw when value is NaN", () => {
-    expect(() => PriceVO.create(NaN)).toThrow();
+    expect(() => PriceVO.create(Number.NaN)).toThrow();
   });
 
   it("should throw when value is Infinity", () => {
-    expect(() => PriceVO.create(Infinity)).toThrow();
+    expect(() => PriceVO.create(Number.POSITIVE_INFINITY)).toThrow();
   });
 
   it("should return true for equals() with same value", () => {

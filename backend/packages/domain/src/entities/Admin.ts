@@ -42,10 +42,22 @@ export class Admin {
     return new Admin(props);
   }
 
-  get id(): string { return this.props.id; }
-  get email(): EmailVO { return this.props.email; }
-  get passwordHash(): string { return this.props.passwordHash; }
-  get role(): AdminRole { return this.props.role; }
-  get createdAt(): Date { return this.props.createdAt; }
-  get lastLoginAt(): Date | null { return this.props.lastLoginAt; }
+  get id(): string {
+    return this.props.id;
+  }
+  get email(): EmailVO {
+    return this.props.email;
+  }
+  get passwordHash(): string {
+    return this.props.passwordHash;
+  }
+  get role(): AdminRole {
+    return this.props.role;
+  }
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+  get lastLoginAt(): Date | null {
+    return this.props.lastLoginAt;
+  }
 }

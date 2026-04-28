@@ -1,3 +1,7 @@
+# Only print output on failure — keeps the terminal clean on success.
+output:
+  - failure
+
 pre-commit:
   parallel: false
   commands:
@@ -10,5 +14,10 @@ pre-commit:
 
 commit-msg:
   commands:
+    # scope-check runs here (not pre-commit) because .git/COMMIT_EDITMSG
+    # is only written AFTER pre-commit hooks complete. Running it in
+    # commit-msg guarantees $1 points to the real message file.
+    scope-check:
+      run: bash scripts/check-commit-scope.sh {1}
     commitlint:
       run: pnpm commitlint --edit {1}

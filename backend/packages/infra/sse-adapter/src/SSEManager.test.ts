@@ -1,7 +1,7 @@
+import { EventEmitter } from "node:events";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { createLogger } from "@repo/utils";
-import { EventEmitter } from "node:events";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { SSEManager } from "./SSEManager.js";
 
 // Mock writable stream

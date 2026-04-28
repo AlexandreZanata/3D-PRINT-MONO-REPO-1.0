@@ -1,42 +1,33 @@
-# EXAMPLE USAGE:
+# Root Lefthook configuration.
 #
-#   Refer for explanation to following link:
-#   https://lefthook.dev/configuration/
-#
-# pre-push:
-#   jobs:
-#     - name: packages audit
-#       tags:
-#         - frontend
-#         - security
-#       run: yarn audit
-#
-#     - name: gems audit
-#       tags:
-#         - backend
-#         - security
-#       run: bundle audit
-#
-# pre-commit:
-#   parallel: true
-#   jobs:
-#     - run: yarn eslint {staged_files}
-#       glob: "*.{js,ts,jsx,tsx}"
-#
-#     - name: rubocop
-#       glob: "*.rb"
-#       exclude:
-#         - config/application.rb
-#         - config/routes.rb
-#       run: bundle exec rubocop --force-exclusion -- {all_files}
-#
-#     - name: govet
-#       files: git ls-files -m
-#       glob: "*.go"
-#       run: go vet -- {files}
-#
-#     - script: "hello.js"
-#       runner: node
-#
-#     - script: "hello.go"
-#       runner: go run
+# The .git directory lives at the workspace root, so Lefthook must be
+# configured here. All commands delegate into the backend/ sub-project.
+
+# Only print output on failure — keeps the terminal clean on success.
+output:
+  - failure
+
+pre-commit:
+  parallel: false
+  commands:
+    lint:
+      root: "backend/"
+      run: pnpm biome check .
+    typecheck:
+      root: "backend/"
+      run: pnpm turbo typecheck
+    test:
+      root: "backend/"
+      run: pnpm turbo test -- --passWithNoTests
+
+commit-msg:
+  commands:
+    # scope-check runs here (not pre-commit) because the commit message file
+    # (.git/COMMIT_EDITMSG) is only written AFTER pre-commit hooks complete.
+    # Running it in commit-msg guarantees $1 points to the real message.
+    scope-check:
+      root: "backend/"
+      run: bash scripts/check-commit-scope.sh {1}
+    commitlint:
+      root: "backend/"
+      run: pnpm commitlint --edit {1}

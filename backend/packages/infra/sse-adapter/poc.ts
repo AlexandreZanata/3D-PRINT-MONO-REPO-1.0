@@ -3,8 +3,8 @@
 // Run: npx tsx poc.ts
 // Then in another terminal: curl http://localhost:3100/events
 
-import { createLogger } from "@repo/utils";
 import { createServer } from "node:http";
+import { createLogger } from "@repo/utils";
 import { SSEManager } from "./src/index.js";
 
 const logger = createLogger("sse-poc");
@@ -23,7 +23,7 @@ const server = createServer((req, res) => {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
+      Connection: "keep-alive",
       "Access-Control-Allow-Origin": "*",
     });
 

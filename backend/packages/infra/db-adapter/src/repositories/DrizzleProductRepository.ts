@@ -1,5 +1,10 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
-import type { IProductRepository, PaginatedResult, PaginationOptions, ProductFilters } from "@repo/domain";
+import type {
+  IProductRepository,
+  PaginatedResult,
+  PaginationOptions,
+  ProductFilters,
+} from "@repo/domain";
 import type { Product } from "@repo/domain";
 import { InfraError } from "@repo/utils";
 import { type Result, err, ok } from "@repo/utils";
@@ -40,7 +45,10 @@ export class DrizzleProductRepository implements IProductRepository {
           .where(and(...conditions))
           .limit(pagination.limit)
           .offset(offset),
-        this.db.select({ total: count() }).from(productsTable).where(and(...conditions)),
+        this.db
+          .select({ total: count() })
+          .from(productsTable)
+          .where(and(...conditions)),
       ]);
 
       return ok({
@@ -111,8 +119,10 @@ export class DrizzleProductRepository implements IProductRepository {
 function buildConditions(filters: ProductFilters) {
   const conditions = [isNull(productsTable.deletedAt)];
   if (filters.name !== undefined) conditions.push(ilike(productsTable.name, `%${filters.name}%`));
-  if (filters.minPrice !== undefined) conditions.push(gte(productsTable.price, filters.minPrice.toString()));
-  if (filters.maxPrice !== undefined) conditions.push(lte(productsTable.price, filters.maxPrice.toString()));
+  if (filters.minPrice !== undefined)
+    conditions.push(gte(productsTable.price, filters.minPrice.toString()));
+  if (filters.maxPrice !== undefined)
+    conditions.push(lte(productsTable.price, filters.maxPrice.toString()));
   if (filters.isActive !== undefined) conditions.push(eq(productsTable.isActive, filters.isActive));
   return conditions;
 }

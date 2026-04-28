@@ -5,8 +5,5 @@
     "outDir": "dist"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../../domain" },
-    { "path": "../../utils" }
-  ]
+  "references": [{ "path": "../../domain" }, { "path": "../../utils" }]
 }

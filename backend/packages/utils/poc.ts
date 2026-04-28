@@ -4,14 +4,14 @@
 // Then: curl http://localhost:3200/health  and  curl http://localhost:3200/products
 
 import express from "express";
-import { createLogger, withCorrelation } from "./src/logger.js";
+import { NotFoundError } from "./src/errors/index.js";
 import {
   correlationIdMiddleware,
   createErrorHandler,
   createHealthHandler,
   requestLogger,
 } from "./src/http/index.js";
-import { NotFoundError } from "./src/errors/index.js";
+import { createLogger, withCorrelation } from "./src/logger.js";
 
 const logger = createLogger("poc");
 const app = express();
@@ -32,8 +32,8 @@ app.get(
 );
 
 // ── Demo: correlation ID in logs ──────────────────────────────────────────────
-app.get("/products", (req, res) => {
-  const correlationId = res.locals["correlationId"] as string;
+app.get("/products", (_req, res) => {
+  const correlationId = res.locals.correlationId as string;
   const log = withCorrelation(logger, correlationId);
   log.info("listing products");
   res.json({ success: true, data: [] });
