@@ -1,27 +1,26 @@
 {
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "eslint.config.js"],
+  // Extends the monorepo frontend base — browser-compatible strict TypeScript.
+  // See /tsconfig.frontend.base.json for the shared settings.
+  "extends": "../tsconfig.frontend.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "src/atoms/ui",
+    "src/components/ui"
+  ],
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-
-    /* Bundler mode */
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
-
-    /* Linting */
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
     "paths": {
-      "@/*": ["./src/*"]
+      // Import alias — "@/" maps to "src/" so no relative ../../../ imports
+      "@/*": ["./src/*"],
+
+      // @repo/contracts types shared from the backend monorepo (built dist)
+      // Only contracts is needed on the frontend — no server-side packages
+      "@repo/contracts": ["../backend/packages/contracts/dist/index.d.ts"],
+      "@repo/contracts/*": ["../backend/packages/contracts/dist/*"]
     }
   }
 }

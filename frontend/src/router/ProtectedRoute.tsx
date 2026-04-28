@@ -1,26 +1,30 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useAuthStore } from "@/store/authStore";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  /** Route to redirect to when unauthenticated. Defaults to "/" until /login exists. */
+  redirectTo?: "/";
 }
 
 /**
- * Redirects unauthenticated users to /login.
- * Preserves the intended destination in location.state.from for post-login redirect.
- *
- * NOTE: This project uses TanStack Router for file-based routing.
- * This component is provided for future migration to React Router v6
- * or for use in nested route guards within TanStack Router layouts.
+ * Redirects unauthenticated users to the specified route (default: "/").
+ * Will redirect to "/login" once that route is added to the router.
+ * Uses TanStack Router navigation — compatible with file-based routing.
  */
-export function ProtectedRoute({ children }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, redirectTo = "/" }: ProtectedRouteProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const location = useLocation();
+  const navigate = useNavigate();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+  useEffect(() => {
+    if (!isAuthenticated) {
+      void navigate({ to: redirectTo });
+    }
+  }, [isAuthenticated, navigate, redirectTo]);
+
+  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 }

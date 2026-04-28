@@ -1,0 +1,31 @@
+{
+  // Base TypeScript config for browser/Vite frontend apps in this monorepo.
+  // Uses Bundler module resolution (required for Vite) instead of NodeNext.
+  // Extends the strict settings from the backend base but replaces Node-specific options.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+
+    // Strict flags — same as backend tsconfig.base.json except:
+    // - exactOptionalPropertyTypes is OFF: shadcn/ui generated components are
+    //   incompatible with this flag (they use optional props without undefined unions)
+    // - verbatimModuleSyntax is OFF: shadcn components use mixed import styles
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Vite handles emit — TypeScript only type-checks
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true
+  }
+}
