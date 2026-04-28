@@ -3,11 +3,14 @@ import { sql } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { adminsTable } from "./admins.js";
 
-/** Native PostgreSQL 18.1+ UUIDv7 (no extension required). */
-const uuidv7Default = sql`gen_random_uuid_v7()`;
+/**
+ * DB-level UUID default via uuid-ossp.
+ * The application always supplies IDs explicitly via Node.js crypto.randomUUID().
+ */
+const uuidDefault = sql`uuid_generate_v4()`;
 
 export const refreshTokensTable = pgTable("refresh_tokens", {
-  id: uuid("id").primaryKey().default(uuidv7Default),
+  id: uuid("id").primaryKey().default(uuidDefault),
   adminId: uuid("admin_id")
     .notNull()
     .references(() => adminsTable.id, { onDelete: "cascade" }),

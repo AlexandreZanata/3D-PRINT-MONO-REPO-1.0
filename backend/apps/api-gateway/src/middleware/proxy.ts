@@ -5,17 +5,19 @@ import { URL } from "node:url";
 import type { Request, Response } from "express";
 
 /**
- * Creates a simple reverse-proxy handler that forwards the request to a
- * downstream service URL, preserving method, headers, and body.
- * The X-Correlation-ID header is forwarded automatically.
+ * Creates a reverse-proxy handler that forwards requests to a downstream service.
+ * Uses req.originalUrl to preserve the full path. For POST/PUT/PATCH, serializes
+ * req.body back to JSON (since express.json() already consumed the stream).
  */
 export function createProxy(targetBase: string) {
   return (req: Request, res: Response): void => {
-    const target = new URL(req.url, targetBase);
+    const target = new URL(req.originalUrl, targetBase);
     const isHttps = target.protocol === "https:";
     const transport = isHttps ? https : http;
-
     const correlationId = res.locals.correlationId as string | undefined;
+
+    const hasBody = ["POST", "PUT", "PATCH"].includes(req.method);
+    const bodyData = hasBody && req.body ? JSON.stringify(req.body) : undefined;
 
     const options: http.RequestOptions = {
       hostname: target.hostname,
@@ -26,6 +28,7 @@ export function createProxy(targetBase: string) {
         ...req.headers,
         host: target.host,
         ...(correlationId ? { "x-correlation-id": correlationId } : {}),
+        ...(bodyData ? { "content-length": Buffer.byteLength(bodyData) } : {}),
       },
     };
 
@@ -43,6 +46,11 @@ export function createProxy(targetBase: string) {
       }
     });
 
-    req.pipe(proxyReq, { end: true });
+    if (bodyData) {
+      proxyReq.write(bodyData);
+      proxyReq.end();
+    } else {
+      proxyReq.end();
+    }
   };
 }

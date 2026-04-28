@@ -2,13 +2,16 @@
 import { sql } from "drizzle-orm";
 import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-/** Native PostgreSQL 18.1+ UUIDv7 (no extension required). */
-const uuidv7Default = sql`gen_random_uuid_v7()`;
+/**
+ * DB-level UUID default via uuid-ossp.
+ * The application always supplies IDs explicitly via Node.js crypto.randomUUID().
+ */
+const uuidDefault = sql`uuid_generate_v4()`;
 
 export const adminRoleEnum = pgEnum("admin_role", ["admin", "super_admin"]);
 
 export const adminsTable = pgTable("admins", {
-  id: uuid("id").primaryKey().default(uuidv7Default),
+  id: uuid("id").primaryKey().default(uuidDefault),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   role: adminRoleEnum("role").notNull().default("admin"),

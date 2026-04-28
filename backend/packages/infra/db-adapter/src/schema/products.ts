@@ -3,13 +3,14 @@ import { sql } from "drizzle-orm";
 import { boolean, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
- * Native PostgreSQL 18.1+ UUIDv7 default.
- * Uses gen_random_uuid_v7() built-in function (no extension required).
+ * DB-level UUID default via uuid-ossp (available in all PostgreSQL versions).
+ * The application always supplies IDs explicitly via Node.js crypto.randomUUID().
+ * This default is a safety net only.
  */
-const uuidv7Default = sql`gen_random_uuid_v7()`;
+const uuidDefault = sql`uuid_generate_v4()`;
 
 export const productsTable = pgTable("products", {
-  id: uuid("id").primaryKey().default(uuidv7Default),
+  id: uuid("id").primaryKey().default(uuidDefault),
   name: text("name").notNull(),
   description: text("description").notNull(),
   // numeric stored as string by postgres driver; parse to number in repo layer
