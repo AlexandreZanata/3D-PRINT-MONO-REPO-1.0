@@ -40,23 +40,35 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
   }
 }
 
-/** Requires the "admin" role. Must follow requireAuth. */
+const ADMIN_ROLES = new Set<string>(["admin", "super_admin"]);
+
+/** Requires an admin JWT role. Must follow requireAuth. */
 export function requireAdmin(_req: Request, res: Response, next: NextFunction): void {
   const payload = res.locals.jwtPayload as JwtPayload | undefined;
-  if (!payload || payload.role !== "admin") {
+  if (!payload || !ADMIN_ROLES.has(payload.role)) {
     next(new ForbiddenError("Admin role required", "FORBIDDEN"));
     return;
   }
   next();
 }
 
+/** Normalizes Express / Node IPv4-mapped addresses for allowlist checks. */
+export function normalizeIp(ip: string): string {
+  if (ip.startsWith("::ffff:")) {
+    return ip.slice("::ffff:".length);
+  }
+  return ip;
+}
+
 /** Checks IP allowlist from ADMIN_ALLOWED_IPS env var. */
 export function requireAllowedIp(req: Request, _res: Response, next: NextFunction): void {
   const allowedRaw = process.env.ADMIN_ALLOWED_IPS ?? "127.0.0.1,::1";
-  const allowed = allowedRaw.split(",").map((ip) => ip.trim());
-  const clientIp = req.ip ?? "";
+  const allowed = new Set(allowedRaw.split(",").map((ip) => normalizeIp(ip.trim())));
 
-  if (!allowed.includes(clientIp)) {
+  const rawIp = req.ip?.length ? req.ip : (req.socket.remoteAddress ?? "");
+  const clientIp = normalizeIp(rawIp);
+
+  if (!allowed.has(clientIp)) {
     next(new ForbiddenError(`IP ${clientIp} not allowed`, "IP_NOT_ALLOWED"));
     return;
   }

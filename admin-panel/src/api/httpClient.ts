@@ -1,17 +1,20 @@
 import axios from "axios";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import type { ApiSuccessTokenPair } from "./authTypes";
 import { ENDPOINTS } from "./endpoints";
+import { resolveApiBaseUrl } from "./resolveApiBaseUrl";
 
 export const httpClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
+  baseURL: resolveApiBaseUrl(),
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
 export interface HttpClientDeps {
   getAccessToken: () => string | null;
+  getRefreshToken: () => string | null;
   getCsrfToken: () => string | null;
-  setAccessToken: (token: string) => void;
+  setTokenPair: (accessToken: string, refreshToken: string) => void;
   clearSession: () => void;
 }
 
@@ -44,13 +47,18 @@ export function initHttpClient(deps: HttpClientDeps): void {
 
       if (error.response?.status === 401 && !original._retry) {
         original._retry = true;
+        const refresh = deps.getRefreshToken();
+        if (refresh === null || refresh.length === 0) {
+          deps.clearSession();
+          window.location.href = "/login";
+          return Promise.reject(error);
+        }
         try {
-          const { data } = await httpClient.post<{ data: { accessToken: string } }>(
-            ENDPOINTS.AUTH_REFRESH,
-          );
-          const newToken = data.data.accessToken;
-          deps.setAccessToken(newToken);
-          original.headers.Authorization = `Bearer ${newToken}`;
+          const { data } = await httpClient.post<ApiSuccessTokenPair>(ENDPOINTS.AUTH_REFRESH, {
+            refreshToken: refresh,
+          });
+          deps.setTokenPair(data.data.accessToken, data.data.refreshToken);
+          original.headers.Authorization = `Bearer ${data.data.accessToken}`;
           return httpClient(original);
         } catch {
           deps.clearSession();

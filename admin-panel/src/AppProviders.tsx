@@ -1,21 +1,17 @@
 import { useEffect, type ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { initHttpClient } from "@/api/httpClient";
+import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/store/authStore";
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: 1, refetchOnWindowFocus: false },
-  },
-});
 
 function useHttpClientInit(): void {
   const { getState } = useAuthStore;
   useEffect(() => {
     initHttpClient({
       getAccessToken: () => getState().accessToken,
+      getRefreshToken: () => getState().refreshToken,
       getCsrfToken: () => getState().csrfToken,
-      setAccessToken: (token) => getState().setAccessToken(token),
+      setTokenPair: (accessToken, refreshToken) => getState().setTokenPair(accessToken, refreshToken),
       clearSession: () => getState().clearSession(),
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps

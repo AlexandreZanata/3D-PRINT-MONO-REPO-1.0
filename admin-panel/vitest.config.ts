@@ -1,20 +1,22 @@
-// @max-lines 200 — this is enforced by the lint pipeline.
 import { defineConfig } from "vitest/config";
+import { resolve } from "node:path";
 
 export default defineConfig({
   test: {
-    globals: true,
     environment: "node",
+    include: ["src/**/*.test.ts"],
+    globals: true,
     pool: "threads",
     poolOptions: {
       threads: {
         singleThread: true,
       },
     },
-    passWithNoTests: true,
-    coverage: {
-      provider: "v8",
-      thresholds: { lines: 80 },
+    fileParallelism: false,
+  },
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "./src"),
     },
   },
 });

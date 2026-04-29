@@ -1,5 +1,6 @@
 export interface Session {
   readonly accessToken: string;
+  readonly refreshToken: string;
   readonly adminUser: {
     readonly id: string;
     readonly email: string;

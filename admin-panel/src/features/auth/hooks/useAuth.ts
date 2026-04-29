@@ -21,12 +21,16 @@ export function useAuth() {
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginCredentials) => login(credentials),
     onSuccess: (session) => {
-      setTokens(session.accessToken, session.adminUser);
+      setTokens(session.accessToken, session.adminUser, session.refreshToken);
     },
   });
 
   const logoutMutation = useMutation({
-    mutationFn: () => logout(),
+    mutationFn: () => {
+      const rt = useAuthStore.getState().refreshToken;
+      if (rt === null || rt.length === 0) return Promise.resolve();
+      return logout(rt);
+    },
     onSuccess: () => {
       clearSession();
     },

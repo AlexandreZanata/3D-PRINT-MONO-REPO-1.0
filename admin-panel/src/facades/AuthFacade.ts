@@ -39,6 +39,7 @@ export function toSession(raw: ApiLoginResponse, email: string): Session {
   const payload = decodeJwtPayload(raw.data.accessToken);
   return {
     accessToken: raw.data.accessToken,
+    refreshToken: raw.data.refreshToken,
     adminUser: {
       id: payload.sub,
       email,

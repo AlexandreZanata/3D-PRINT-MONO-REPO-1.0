@@ -11,14 +11,16 @@ export type JsonValue =
  */
 export function coerceJsonValue(value: unknown): JsonValue {
   if (value === null) return null;
-  const t = typeof value;
-  if (t === "string" || t === "number" || t === "boolean") return value;
+
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return value;
+  if (typeof value === "boolean") return value;
 
   if (Array.isArray(value)) {
     return value.map((item) => coerceJsonValue(item));
   }
 
-  if (t === "object") {
+  if (typeof value === "object" && value !== null) {
     const out: Record<string, JsonValue> = {};
     for (const [k, v] of Object.entries(value)) {
       out[k] = coerceJsonValue(v);
@@ -26,5 +28,5 @@ export function coerceJsonValue(value: unknown): JsonValue {
     return out;
   }
 
-  throw new Error(`Unsupported JSON value type: ${t}`);
+  throw new Error(`Unsupported JSON value type: ${typeof value}`);
 }

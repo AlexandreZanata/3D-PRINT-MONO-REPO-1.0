@@ -1,8 +1,21 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
 import "../styles/globals.css";
 import { AppProviders } from "@/AppProviders";
 
+function RootNotFound() {
+  return (
+    <div className="min-h-[40vh] flex flex-col items-center justify-center gap-4 p-8 text-center">
+      <p className="text-lg font-medium">Page not found</p>
+      <p className="text-sm text-muted-foreground">
+        Try <Link to="/login" className="underline underline-offset-4">Sign in</Link> or{" "}
+        <Link to="/products" className="underline underline-offset-4">Products</Link>.
+      </p>
+    </div>
+  );
+}
+
 export const Route = createRootRoute({
+  notFoundComponent: RootNotFound,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
