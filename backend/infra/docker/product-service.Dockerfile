@@ -16,7 +16,7 @@ COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 COPY packages/infra/queue-adapter/package.json ./packages/infra/queue-adapter/
 COPY packages/infra/sse-adapter/package.json ./packages/infra/sse-adapter/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY apps/product-service ./apps/product-service
 COPY packages/application ./packages/application
@@ -56,7 +56,7 @@ COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 COPY packages/infra/queue-adapter/package.json ./packages/infra/queue-adapter/
 COPY packages/infra/sse-adapter/package.json ./packages/infra/sse-adapter/
 
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY --from=builder /repo/apps/product-service/dist ./apps/product-service/dist
 COPY --from=builder /repo/packages/application/dist ./packages/application/dist
@@ -70,7 +70,6 @@ COPY --from=builder /repo/packages/infra/sse-adapter/dist ./packages/infra/sse-a
 
 WORKDIR /repo/apps/product-service
 
-# Run as non-root user for security
 USER node
 
 ENV NODE_ENV=production

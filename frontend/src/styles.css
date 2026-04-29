@@ -2,7 +2,9 @@
 @source "../src";
 @import "tw-animate-css";
 
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&display=swap");
+/* Google Fonts loaded via <link> in __root.tsx head() — not here,
+   because @import url() after @import "tailwindcss" violates PostCSS
+   ordering rules once Tailwind v4 generates @layer properties. */
 
 @custom-variant dark (&:is(.dark *));
 

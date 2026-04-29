@@ -7,11 +7,16 @@ import type { LoginCredentials } from "../types";
  * Provides login and logout mutations wired to the authStore.
  * On login success: stores accessToken + adminUser in Zustand.
  * On logout: clears the session.
+ *
+ * All store reads are consolidated into a single selector to prevent
+ * cascading re-renders (Maximum update depth exceeded).
  */
 export function useAuth() {
-  const { setTokens, clearSession } = useAuthStore((s) => ({
+  const { setTokens, clearSession, isAuthenticated, adminUser } = useAuthStore((s) => ({
     setTokens: s.setTokens,
     clearSession: s.clearSession,
+    isAuthenticated: s.isAuthenticated,
+    adminUser: s.adminUser,
   }));
 
   const loginMutation = useMutation({
@@ -35,7 +40,7 @@ export function useAuth() {
   return {
     login: loginMutation,
     logout: logoutMutation,
-    isAuthenticated: useAuthStore((s) => s.isAuthenticated),
-    adminUser: useAuthStore((s) => s.adminUser),
+    isAuthenticated,
+    adminUser,
   };
 }

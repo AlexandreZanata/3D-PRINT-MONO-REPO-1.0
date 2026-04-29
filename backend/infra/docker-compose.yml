@@ -87,7 +87,28 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
 
-  # ── product-service ──────────────────────────────────────────────────────────
+  # ── migrate (runs once, applies all SQL migrations in order) ─────────────────
+  migrate:
+    image: postgres:18.1-alpine
+    container_name: migrate
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ../packages/infra/db-adapter/migrations:/migrations:ro
+    command: >
+      sh -c "
+        psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ecommerce}
+          -f /migrations/00000_bootstrap.sql &&
+        psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ecommerce}
+          -f /migrations/00001_product_rich_fields_and_site_settings.sql &&
+        echo 'migrations complete'
+      "
+
+
   product-service:
     build:
       context: ..
@@ -101,6 +122,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
@@ -140,6 +163,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ../secrets/jwt.private.pem:/run/secrets/jwt_private_key:ro
+      - ../secrets/jwt.public.pem:/run/secrets/jwt_public_key:ro
     environment:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
@@ -154,7 +182,7 @@ services:
       JWT_PRIVATE_KEY_PATH: /run/secrets/jwt_private_key
       JWT_PUBLIC_KEY_PATH: /run/secrets/jwt_public_key
       JWT_ACCESS_TOKEN_EXPIRY: ${JWT_ACCESS_TOKEN_EXPIRY:-15m}
-      ADMIN_ALLOWED_IPS: ${ADMIN_ALLOWED_IPS:-127.0.0.1,::1}
+      ADMIN_ALLOWED_IPS: ${ADMIN_ALLOWED_IPS:-127.0.0.1,::1,::ffff:127.0.0.1}
       ADMIN_SERVICE_PORT: 3002
     ports:
       - "${ADMIN_SERVICE_PORT:-3002}:3002"

@@ -14,7 +14,7 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 COPY packages/infra/queue-adapter/package.json ./packages/infra/queue-adapter/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY apps/notification-service ./apps/notification-service
 COPY packages/application ./packages/application
@@ -48,7 +48,7 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 COPY packages/infra/queue-adapter/package.json ./packages/infra/queue-adapter/
 
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY --from=builder /repo/apps/notification-service/dist ./apps/notification-service/dist
 COPY --from=builder /repo/packages/application/dist ./packages/application/dist
@@ -60,7 +60,6 @@ COPY --from=builder /repo/packages/infra/queue-adapter/dist ./packages/infra/que
 
 WORKDIR /repo/apps/notification-service
 
-# Run as non-root user for security
 USER node
 
 ENV NODE_ENV=production

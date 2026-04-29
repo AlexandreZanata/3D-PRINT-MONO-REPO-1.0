@@ -1,6 +1,8 @@
 # ─── admin-service — multi-stage production image ────────────────────────────
 FROM node:22-alpine AS builder
 
+# argon2 requires python3 + make + g++ to compile native bindings
+RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 WORKDIR /repo
@@ -14,7 +16,8 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/infra/db-adapter/package.json ./packages/infra/db-adapter/
 COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm rebuild argon2
 
 COPY apps/admin-service ./apps/admin-service
 COPY packages/application ./packages/application
@@ -35,6 +38,8 @@ RUN pnpm --filter @repo/admin-service build
 # ─── Runtime ─────────────────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime
 
+# python3/make/g++ needed to rebuild argon2 native binary in runtime stage
+RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
 WORKDIR /repo
@@ -48,7 +53,8 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/infra/db-adapter/package.json ./packages/infra/db-adapter/
 COPY packages/infra/cache-adapter/package.json ./packages/infra/cache-adapter/
 
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
+RUN pnpm rebuild argon2
 
 COPY --from=builder /repo/apps/admin-service/dist ./apps/admin-service/dist
 COPY --from=builder /repo/packages/application/dist ./packages/application/dist
@@ -60,7 +66,6 @@ COPY --from=builder /repo/packages/infra/cache-adapter/dist ./packages/infra/cac
 
 WORKDIR /repo/apps/admin-service
 
-# Run as non-root user for security
 USER node
 
 ENV NODE_ENV=production
