@@ -1,0 +1,30 @@
+export type JsonPrimitive = string | number | boolean | null;
+
+export type JsonValue =
+  | JsonPrimitive
+  | readonly JsonValue[]
+  | { readonly [key: string]: JsonValue };
+
+/**
+ * Coerces an arbitrary JSON-compatible value from the API into JsonValue.
+ * Throws if the value contains unsupported types (e.g. function, undefined).
+ */
+export function coerceJsonValue(value: unknown): JsonValue {
+  if (value === null) return null;
+  const t = typeof value;
+  if (t === "string" || t === "number" || t === "boolean") return value;
+
+  if (Array.isArray(value)) {
+    return value.map((item) => coerceJsonValue(item));
+  }
+
+  if (t === "object") {
+    const out: Record<string, JsonValue> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = coerceJsonValue(v);
+    }
+    return out;
+  }
+
+  throw new Error(`Unsupported JSON value type: ${t}`);
+}

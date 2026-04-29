@@ -9,7 +9,7 @@ export function ProductCard({ product }: { product: Product }) {
       params={{ slug: product.slug }}
       className="group block animate-fade-up"
     >
-      <div className="aspect-[4/5] mb-4 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1">
+      <div className="aspect-4/5 mb-4 transition-transform duration-500 ease-out-soft group-hover:-translate-y-1">
         <ProductCarousel images={product.images} alt={product.name} className="h-full" />
       </div>
       <div className="flex items-baseline justify-between gap-3">

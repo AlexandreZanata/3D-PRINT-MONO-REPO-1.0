@@ -17,7 +17,12 @@ function formatPrice(amount: number): string {
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ params }) => {
-    const product = await fetchProductBySlug(params.slug);
+    // Try slug first, then fall back to ID-based lookup for legacy URLs
+    let product = await fetchProductBySlug(params.slug);
+    if (!product) {
+      // params.slug might actually be a UUID — try fetching by ID
+      product = await fetchProductById(params.slug).catch(() => null);
+    }
     if (!product) throw notFound();
     return { product };
   },
