@@ -65,6 +65,25 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/*
+          Critical inline styles — applied before any external stylesheet loads.
+          Prevents FOUC (flash of unstyled content) during SSR hydration.
+          Only includes the minimum needed: background color and font stack.
+          Full design tokens are in globals.css loaded via HeadContent.
+        */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          :root {
+            --background: oklch(0.975 0.006 80);
+            --foreground: oklch(0.18 0.005 50);
+          }
+          html { background-color: oklch(0.975 0.006 80); }
+          body {
+            background-color: oklch(0.975 0.006 80);
+            color: oklch(0.18 0.005 50);
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, sans-serif;
+          }
+        `}} />
       </head>
       <body>
         {children}
