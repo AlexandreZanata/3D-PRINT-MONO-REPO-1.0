@@ -1,18 +1,15 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { Router } from "express";
 import type { AdminProductController } from "../controllers/AdminProductController.js";
+import type { AdminSiteSettingsController } from "../controllers/AdminSiteSettingsController.js";
 import type { AuditLogController } from "../controllers/AuditLogController.js";
 import type { AuthController } from "../controllers/AuthController.js";
 import { requireAdmin, requireAllowedIp, requireAuth } from "../middleware/auth.js";
 
-/**
- * Builds the admin service router.
- * Auth routes: /api/v1/auth/*
- * Admin routes: /api/v1/admin/* (require JWT + admin role + IP allowlist)
- */
 export function buildAdminRouter(
   authCtrl: AuthController,
   productCtrl: AdminProductController,
+  siteSettingsCtrl: AdminSiteSettingsController,
   auditCtrl: AuditLogController,
 ): Router {
   const router = Router();
@@ -29,6 +26,10 @@ export function buildAdminRouter(
   router.post("/admin/products", ...adminGuard, productCtrl.create);
   router.put("/admin/products/:id", ...adminGuard, productCtrl.update);
   router.delete("/admin/products/:id", ...adminGuard, productCtrl.remove);
+
+  router.get("/admin/site-settings", ...adminGuard, siteSettingsCtrl.get);
+  router.put("/admin/site-settings", ...adminGuard, siteSettingsCtrl.update);
+
   router.get("/admin/audit-logs", ...adminGuard, auditCtrl.list);
 
   return router;

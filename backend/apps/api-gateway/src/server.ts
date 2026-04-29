@@ -47,6 +47,9 @@ export function buildServer(): express.Application {
   // ── Public product routes ─────────────────────────────────────────────────
   app.use("/api/v1/products", publicRateLimit, createProxy(productServiceUrl));
 
+  // ── Public site-settings (read-only, served by product-service) ───────────
+  app.use("/api/v1/site-settings", publicRateLimit, createProxy(productServiceUrl));
+
   // ── Auth routes ───────────────────────────────────────────────────────────
   app.use("/api/v1/auth", authRateLimit, createProxy(adminServiceUrl));
 

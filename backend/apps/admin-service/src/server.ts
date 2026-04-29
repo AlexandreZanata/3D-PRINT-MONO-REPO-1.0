@@ -31,6 +31,7 @@ export function buildServer(root: CompositionRoot): express.Application {
   const apiRouter = buildAdminRouter(
     root.authController,
     root.productController,
+    root.siteSettingsController,
     root.auditLogController,
   );
   app.use("/api/v1", apiRouter);

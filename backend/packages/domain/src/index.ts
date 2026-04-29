@@ -7,6 +7,8 @@ export { Product } from "./entities/Product.js";
 export type { ProductProps, CreateProductInput } from "./entities/Product.js";
 export { Admin } from "./entities/Admin.js";
 export type { AdminProps, CreateAdminInput, AdminRole } from "./entities/Admin.js";
+export { SiteSetting } from "./entities/SiteSettings.js";
+export type { SiteSettingProps, SiteSettingsMap } from "./entities/SiteSettings.js";
 
 export { PriceVO } from "./value-objects/PriceVO.js";
 export { WhatsAppNumberVO } from "./value-objects/WhatsAppNumberVO.js";
@@ -29,6 +31,7 @@ export type {
   RefreshTokenRecord,
 } from "./repositories/IRefreshTokenRepository.js";
 export type { IAuditLogRepository, AuditLogRecord } from "./repositories/IAuditLogRepository.js";
+export type { ISiteSettingsRepository } from "./repositories/ISiteSettingsRepository.js";
 
 export type { QueuePublisher, QueueMessage } from "./interfaces/QueuePublisher.js";
 export type { QueueConsumer, MessageHandler } from "./interfaces/QueueConsumer.js";

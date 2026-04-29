@@ -20,6 +20,8 @@ export async function fetchProducts(filters: ProductFilters = {}): Promise<Produ
       page: filters.page ?? 1,
       limit: filters.limit ?? 20,
       ...(filters.name !== undefined && { name: filters.name }),
+      ...(filters.slug !== undefined && { slug: filters.slug }),
+      ...(filters.category !== undefined && { category: filters.category }),
       ...(filters.minPrice !== undefined && { min_price: filters.minPrice }),
       ...(filters.maxPrice !== undefined && { max_price: filters.maxPrice }),
       ...(filters.isActive !== undefined && { is_active: filters.isActive }),
@@ -40,6 +42,18 @@ export async function fetchProducts(filters: ProductFilters = {}): Promise<Produ
 export async function fetchProductById(id: string): Promise<Product> {
   const { data } = await httpClient.get<ApiEnvelope<ApiProduct>>(ENDPOINTS.PRODUCT_BY_ID(id));
   return toProduct(data.data);
+}
+
+/**
+ * Fetches a single product by slug.
+ * Uses the list endpoint with a slug filter and returns the first match.
+ */
+export async function fetchProductBySlug(slug: string): Promise<Product | null> {
+  const { data } = await httpClient.get<ApiEnvelope<ApiProduct[]>>(ENDPOINTS.PRODUCTS_LIST, {
+    params: { slug, limit: 1, page: 1 },
+  });
+  const first = data.data[0];
+  return first ? toProduct(first) : null;
 }
 
 /**

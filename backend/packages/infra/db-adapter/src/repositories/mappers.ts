@@ -6,17 +6,34 @@ import { PriceVO } from "@repo/domain";
 import { WhatsAppNumberVO } from "@repo/domain";
 import type { AdminSelectModel, ProductSelectModel } from "../schema/index.js";
 
+/**
+ * Parses the images JSONB column.
+ * The DB stores a JSON array of strings; the Drizzle driver returns it as
+ * `unknown` — we narrow it here so the rest of the codebase stays type-safe.
+ */
+function parseImages(raw: unknown): readonly string[] {
+  if (!Array.isArray(raw)) return [];
+  // Filter to strings only — defensive against corrupt data
+  return raw.filter((item): item is string => typeof item === "string");
+}
+
 /** Maps a Drizzle product row to the Product domain entity. */
 export function toProductEntity(row: ProductSelectModel): Product {
   return Product.reconstitute({
     id: row.id,
     name: row.name,
+    slug: row.slug ?? null,
+    tagline: row.tagline,
+    category: row.category,
+    material: row.material,
+    dimensions: row.dimensions,
     description: row.description,
     // numeric columns come back as strings from postgres driver
     price: PriceVO.create(Number(row.price)),
     stock: Number(row.stock),
     whatsappNumber: WhatsAppNumberVO.create(row.whatsappNumber),
     imageUrl: row.imageUrl ?? null,
+    images: parseImages(row.images),
     isActive: row.isActive,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,

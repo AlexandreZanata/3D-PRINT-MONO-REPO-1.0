@@ -5,9 +5,11 @@ import type { Product } from "../entities/Product.js";
 
 export interface ProductFilters {
   readonly name?: string;
+  readonly slug?: string;
   readonly minPrice?: number;
   readonly maxPrice?: number;
   readonly isActive?: boolean;
+  readonly category?: string;
 }
 
 export interface PaginationOptions {

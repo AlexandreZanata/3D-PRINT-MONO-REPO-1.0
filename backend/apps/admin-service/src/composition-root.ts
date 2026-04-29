@@ -1,30 +1,35 @@
+// @max-lines 200 — this is enforced by the lint pipeline.
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
-// @max-lines 200 — this is enforced by the lint pipeline.
 import {
   AuthFacade,
   CreateProductUseCase,
   DeleteProductUseCase,
   GetProductByIdUseCase,
+  GetSiteSettingsUseCase,
   GetWhatsAppLinkUseCase,
   ListProductsUseCase,
   LoginUseCase,
   LogoutUseCase,
   ProductFacade,
   RefreshTokenUseCase,
+  SiteSettingsFacade,
   UpdateProductUseCase,
+  UpdateSiteSettingsUseCase,
 } from "@repo/application";
 import {
   DrizzleAdminRepository,
   DrizzleAuditLogRepository,
   DrizzleProductRepository,
   DrizzleRefreshTokenRepository,
+  DrizzleSiteSettingsRepository,
   createDbClient,
 } from "@repo/db-adapter";
 import { createLogger } from "@repo/utils";
 import { verify as argon2Verify } from "argon2";
 import jwt from "jsonwebtoken";
 import { AdminProductController } from "./controllers/AdminProductController.js";
+import { AdminSiteSettingsController } from "./controllers/AdminSiteSettingsController.js";
 import { AuditLogController } from "./controllers/AuditLogController.js";
 import { AuthController } from "./controllers/AuthController.js";
 import { AuditService } from "./services/AuditService.js";
@@ -38,6 +43,7 @@ function getEnv(key: string): string {
 export interface CompositionRoot {
   readonly authController: AuthController;
   readonly productController: AdminProductController;
+  readonly siteSettingsController: AdminSiteSettingsController;
   readonly auditLogController: AuditLogController;
   readonly close: () => Promise<void>;
 }
@@ -57,20 +63,19 @@ export async function buildCompositionRoot(): Promise<CompositionRoot> {
   const tokenRepo = new DrizzleRefreshTokenRepository(db);
   const productRepo = new DrizzleProductRepository(db);
   const auditLogRepo = new DrizzleAuditLogRepository(db);
+  const settingsRepo = new DrizzleSiteSettingsRepository(db);
 
   const privateKey = readFileSync(getEnv("JWT_PRIVATE_KEY_PATH"), "utf-8");
   const accessExpiry = process.env.JWT_ACCESS_TOKEN_EXPIRY ?? "15m";
   const refreshTtlDays = 7;
 
   const signAccessToken = (adminId: string, role: string): string =>
-    // jwt.sign accepts string for expiresIn; cast is safe — value comes from env
     jwt.sign({ sub: adminId, role }, privateKey, {
       algorithm: "RS256",
       expiresIn: accessExpiry,
     } as jwt.SignOptions);
 
   const hashToken = (token: string): string => createHash("sha256").update(token).digest("hex");
-
   const generateRefreshToken = (): string => randomBytes(32).toString("hex");
 
   const loginUseCase = new LoginUseCase({
@@ -111,11 +116,21 @@ export async function buildCompositionRoot(): Promise<CompositionRoot> {
     getWhatsAppLink: new GetWhatsAppLinkUseCase(productRepo),
   });
 
+  const siteSettingsFacade = new SiteSettingsFacade({
+    getSettings: new GetSiteSettingsUseCase(settingsRepo),
+    updateSettings: new UpdateSiteSettingsUseCase(settingsRepo),
+  });
+
   const auditService = new AuditService(auditLogRepo, logger);
 
   return {
     authController: new AuthController(authFacade, logger),
     productController: new AdminProductController(productFacade, auditService, logger),
+    siteSettingsController: new AdminSiteSettingsController(
+      siteSettingsFacade,
+      auditService,
+      logger,
+    ),
     auditLogController: new AuditLogController(auditLogRepo, logger),
     close: closeDb,
   };

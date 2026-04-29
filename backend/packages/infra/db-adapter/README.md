@@ -16,12 +16,14 @@ function for UUIDv7 primary keys (no extension required).
 - `DrizzleAdminRepository`
 - `DrizzleRefreshTokenRepository`
 - `DrizzleAuditLogRepository`
+- `DrizzleSiteSettingsRepository`
 
 ### Schema
-- `productsTable`
+- `productsTable` — extended with `slug`, `tagline`, `category`, `material`, `dimensions`, `images` (JSONB)
 - `adminsTable`
 - `refreshTokensTable`
 - `auditLogsTable`
+- `siteSettingsTable` — key-value store for admin-editable page copy
 
 ### Helpers
 - `createDbClient(config)` — returns a Drizzle client instance

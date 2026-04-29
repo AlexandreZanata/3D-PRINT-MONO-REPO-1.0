@@ -16,11 +16,17 @@ function AdminProductNewPage() {
     createMutation.mutate(
       {
         name: values.name,
+        slug: values.slug ?? null,
+        tagline: values.tagline,
+        category: values.category,
+        material: values.material,
+        dimensions: values.dimensions,
         description: values.description,
         price: values.price,
         stock: values.stock,
         whatsappNumber: values.whatsappNumber,
         imageUrl: values.imageUrl ?? null,
+        images: values.images?.map((img) => img.url) ?? [],
       },
       {
         onSuccess: () => void navigate({ to: "/admin/products" }),

@@ -13,18 +13,21 @@ export interface ListProductsResult {
 }
 
 function buildFilters(query: ListProductsQueryDTO): ProductFilters {
-  // Build filters object omitting undefined keys to satisfy exactOptionalPropertyTypes
   const filters: ProductFilters = {};
   const mutable = filters as {
     name?: string;
+    slug?: string;
     minPrice?: number;
     maxPrice?: number;
     isActive?: boolean;
+    category?: string;
   };
   if (query.name !== undefined) mutable.name = query.name;
+  if (query.slug !== undefined) mutable.slug = query.slug;
   if (query.minPrice !== undefined) mutable.minPrice = query.minPrice;
   if (query.maxPrice !== undefined) mutable.maxPrice = query.maxPrice;
   if (query.isActive !== undefined) mutable.isActive = query.isActive;
+  if (query.category !== undefined) mutable.category = query.category;
   return filters;
 }
 

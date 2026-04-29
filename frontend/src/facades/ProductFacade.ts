@@ -1,4 +1,4 @@
-import type { Product, ProductList, WhatsappLink } from "@/features/products/types";
+import type { Product, ProductList, SiteSettings, WhatsappLink } from "@/features/products/types";
 
 /**
  * Raw API shapes — exactly what the backend returns before mapping.
@@ -7,11 +7,17 @@ import type { Product, ProductList, WhatsappLink } from "@/features/products/typ
 export interface ApiProduct {
   readonly id: string;
   readonly name: string;
+  readonly slug: string | null;
+  readonly tagline: string;
+  readonly category: string;
+  readonly material: string;
+  readonly dimensions: string;
   readonly description: string;
   readonly price: number | string; // backend returns numeric string from Drizzle
   readonly stock: number | string;
   readonly whatsappNumber: string;
   readonly imageUrl: string | null;
+  readonly images: readonly string[];
   readonly isActive: boolean;
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -29,19 +35,22 @@ export interface ApiWhatsappResponse {
   readonly url: string;
 }
 
-/**
- * Maps a raw API product to the frontend Product domain type.
- * Normalizes price and stock to numbers (Drizzle returns numeric strings).
- */
+/** Maps a raw API product to the frontend Product domain type. */
 export function toProduct(raw: ApiProduct): Product {
   return {
     id: raw.id,
     name: raw.name,
+    slug: raw.slug,
+    tagline: raw.tagline,
+    category: raw.category,
+    material: raw.material,
+    dimensions: raw.dimensions,
     description: raw.description,
     price: typeof raw.price === "string" ? parseFloat(raw.price) : raw.price,
     stock: typeof raw.stock === "string" ? parseInt(raw.stock, 10) : raw.stock,
     whatsappNumber: raw.whatsappNumber,
     imageUrl: raw.imageUrl,
+    images: raw.images ?? [],
     isActive: raw.isActive,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
@@ -49,9 +58,7 @@ export function toProduct(raw: ApiProduct): Product {
   };
 }
 
-/**
- * Maps a raw API product list to the frontend ProductList domain type.
- */
+/** Maps a raw API product list to the frontend ProductList domain type. */
 export function toProductList(raw: ApiProductList): ProductList {
   return {
     items: raw.items.map(toProduct),
@@ -61,9 +68,12 @@ export function toProductList(raw: ApiProductList): ProductList {
   };
 }
 
-/**
- * Extracts the WhatsApp URL from the API response.
- */
+/** Extracts the WhatsApp URL from the API response. */
 export function toWhatsappUrl(raw: ApiWhatsappResponse): string {
   return raw.url;
+}
+
+/** Maps raw site settings API response to the SiteSettings type. */
+export function toSiteSettings(raw: Record<string, string>): SiteSettings {
+  return raw;
 }

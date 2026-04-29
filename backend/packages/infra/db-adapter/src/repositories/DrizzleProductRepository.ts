@@ -67,11 +67,17 @@ export class DrizzleProductRepository implements IProductRepository {
       await this.db.insert(productsTable).values({
         id: product.id,
         name: product.name,
+        slug: product.slug,
+        tagline: product.tagline,
+        category: product.category,
+        material: product.material,
+        dimensions: product.dimensions,
         description: product.description,
         price: product.price.value.toString(),
         stock: product.stock.toString(),
         whatsappNumber: product.whatsappNumber.value,
         imageUrl: product.imageUrl,
+        images: product.images as string[],
         isActive: product.isActive,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt,
@@ -88,11 +94,17 @@ export class DrizzleProductRepository implements IProductRepository {
         .update(productsTable)
         .set({
           name: product.name,
+          slug: product.slug,
+          tagline: product.tagline,
+          category: product.category,
+          material: product.material,
+          dimensions: product.dimensions,
           description: product.description,
           price: product.price.value.toString(),
           stock: product.stock.toString(),
           whatsappNumber: product.whatsappNumber.value,
           imageUrl: product.imageUrl,
+          images: product.images as string[],
           isActive: product.isActive,
           updatedAt: new Date(),
         })
@@ -119,6 +131,8 @@ export class DrizzleProductRepository implements IProductRepository {
 function buildConditions(filters: ProductFilters) {
   const conditions = [isNull(productsTable.deletedAt)];
   if (filters.name !== undefined) conditions.push(ilike(productsTable.name, `%${filters.name}%`));
+  if (filters.slug !== undefined) conditions.push(eq(productsTable.slug, filters.slug));
+  if (filters.category !== undefined) conditions.push(eq(productsTable.category, filters.category));
   if (filters.minPrice !== undefined)
     conditions.push(gte(productsTable.price, filters.minPrice.toString()));
   if (filters.maxPrice !== undefined)

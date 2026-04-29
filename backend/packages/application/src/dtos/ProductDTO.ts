@@ -4,11 +4,17 @@
 export interface ProductDTO {
   readonly id: string;
   readonly name: string;
+  readonly slug: string | null;
+  readonly tagline: string;
+  readonly category: string;
+  readonly material: string;
+  readonly dimensions: string;
   readonly description: string;
   readonly price: number;
   readonly stock: number;
   readonly whatsappNumber: string;
   readonly imageUrl: string | null;
+  readonly images: readonly string[];
   readonly isActive: boolean;
   readonly createdAt: string; // ISO 8601
   readonly updatedAt: string;
@@ -32,4 +38,9 @@ export interface AuditLogDTO {
 export interface TokenPairDTO {
   readonly accessToken: string;
   readonly refreshToken: string;
+}
+
+/** Flat map of all site settings. */
+export interface SiteSettingsDTO {
+  readonly [key: string]: string;
 }

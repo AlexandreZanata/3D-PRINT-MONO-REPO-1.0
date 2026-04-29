@@ -7,3 +7,5 @@ export { refreshTokensTable } from "./refresh-tokens.js";
 export type { RefreshTokenSelectModel, RefreshTokenInsertModel } from "./refresh-tokens.js";
 export { auditLogsTable } from "./audit-logs.js";
 export type { AuditLogSelectModel, AuditLogInsertModel } from "./audit-logs.js";
+export { siteSettingsTable } from "./site-settings.js";
+export type { SiteSettingSelectModel, SiteSettingInsertModel } from "./site-settings.js";

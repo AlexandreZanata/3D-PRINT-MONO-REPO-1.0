@@ -29,6 +29,9 @@ function AdminLayout() {
             <a href="/admin/products" className="hover:opacity-60 transition-opacity">
               Products
             </a>
+            <a href="/admin/site-settings" className="hover:opacity-60 transition-opacity">
+              Site settings
+            </a>
             <a href="/admin/audit-logs" className="hover:opacity-60 transition-opacity">
               Audit logs
             </a>

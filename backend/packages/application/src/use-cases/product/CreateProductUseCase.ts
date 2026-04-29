@@ -22,11 +22,17 @@ export class CreateProductUseCase {
       product = Product.create({
         id: this.deps.generateId(),
         name: dto.name,
+        slug: dto.slug ?? null,
+        tagline: dto.tagline ?? "",
+        category: dto.category ?? "Decor",
+        material: dto.material ?? "",
+        dimensions: dto.dimensions ?? "",
         description: dto.description,
         price: dto.price,
         stock: dto.stock,
         whatsappNumber: dto.whatsappNumber,
         imageUrl: dto.imageUrl ?? null,
+        images: dto.images ?? [],
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Invalid product data";

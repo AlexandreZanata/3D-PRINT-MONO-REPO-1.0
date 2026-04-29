@@ -22,4 +22,10 @@ export const ENDPOINTS = {
 
   // ── Admin audit logs ──────────────────────────────────────────────────────
   ADMIN_AUDIT_LOGS:     "/api/v1/admin/audit-logs",
+
+  // ── Admin site settings ───────────────────────────────────────────────────
+  ADMIN_SITE_SETTINGS:  "/api/v1/admin/site-settings",
+
+  // ── Public site settings ──────────────────────────────────────────────────
+  SITE_SETTINGS:        "/api/v1/site-settings",
 } as const;
