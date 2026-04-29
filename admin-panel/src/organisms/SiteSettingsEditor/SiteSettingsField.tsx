@@ -7,8 +7,8 @@ interface SiteSettingsFieldProps {
 
 export function SiteSettingsField({ label, id, error, children }: SiteSettingsFieldProps) {
   return (
-    <div className="space-y-1">
-      <label htmlFor={id} className="text-sm font-medium">
+    <div className="space-y-2">
+      <label htmlFor={id} className="text-sm font-medium text-foreground">
         {label}
       </label>
       {children}
