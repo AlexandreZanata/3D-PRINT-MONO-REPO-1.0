@@ -13,8 +13,19 @@ import { buildAdminRouter } from "./routes/admin.routes.js";
 
 const logger = createLogger("admin-service");
 
+function trustProxyHops(): number {
+  const raw = process.env.ADMIN_TRUST_PROXY_HOPS ?? "1";
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 0) {
+    return 1;
+  }
+  return n;
+}
+
 export function buildServer(root: CompositionRoot): express.Application {
   const app = express();
+
+  app.set("trust proxy", trustProxyHops());
 
   app.use(express.json());
   app.use(correlationIdMiddleware);

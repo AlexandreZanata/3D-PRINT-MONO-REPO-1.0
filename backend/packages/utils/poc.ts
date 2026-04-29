@@ -12,6 +12,8 @@ import {
   requestLogger,
 } from "./src/http/index.js";
 import { createLogger, withCorrelation } from "./src/logger.js";
+import { matchesAllowedIpEntry } from "./src/net/allowed-ip-entry.js";
+import { normalizeIp } from "./src/net/normalize-ip.js";
 
 const logger = createLogger("poc");
 const app = express();
@@ -51,4 +53,11 @@ app.listen(3200, () => {
   logger.info("POC server listening on http://localhost:3200");
   logger.info("Try: curl http://localhost:3200/health");
   logger.info("Try: curl http://localhost:3200/products/missing");
+  logger.info(
+    {
+      normalized: normalizeIp("::ffff:127.0.0.1"),
+      dockerPeerOk: matchesAllowedIpEntry("172.18.0.9", "172.16.0.0/12"),
+    },
+    "net helpers example",
+  );
 });

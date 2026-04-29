@@ -37,6 +37,8 @@ export default defineConfig({
        */
       outDir: "dist",
       sourcemap: "hidden",
+      /** Single CSS entry in HTML avoids staggered chunk paints (FOUC). */
+      cssCodeSplit: false,
     },
   },
 });

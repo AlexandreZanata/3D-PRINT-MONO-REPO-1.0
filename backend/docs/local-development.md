@@ -249,14 +249,21 @@ npx tsx packages/infra/db-adapter/src/seed.ts
 
 ### Login returns 403 / IP not allowed
 
-The `ADMIN_ALLOWED_IPS` env var does not include your IP. For local dev it
-should be:
+The `ADMIN_ALLOWED_IPS` env var does not include the IP the **admin-service**
+uses after **`trust proxy`**. The api-gateway rewrites **`X-Forwarded-For`** for
+`/api/v1/admin/*` to the TCP peer that connected to the gateway (so Docker
+bridge addresses are not used for allowlisting). For local dev, allowlist the
+client that hits the gateway (often `127.0.0.1` / `::1` when using the Vite
+proxy):
 
 ```
-ADMIN_ALLOWED_IPS=127.0.0.1,::1,::ffff:127.0.0.1
+ADMIN_ALLOWED_IPS=127.0.0.1,::1,::ffff:127.0.0.1,172.16.0.0/12
+ADMIN_TRUST_PROXY_HOPS=1
 ```
 
-This is already set in `backend/.env`.
+`172.16.0.0/12` covers typical Docker bridge IPv4 peers (e.g. `172.18.0.9`). Tighten this on real production deploys.
+
+This is already set in `backend/.env`. See [ADR 0003](../../docs/adr/0003-admin-ip-behind-gateway.md).
 
 ### `jwt.private.pem: no such file`
 

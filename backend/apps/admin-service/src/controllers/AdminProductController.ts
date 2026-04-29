@@ -2,9 +2,9 @@ import type { ProductDTO, ProductFacade } from "@repo/application";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { CreateProductSchema, ListProductsQuerySchema, UpdateProductSchema } from "@repo/contracts";
 import type { ApiSuccess, PaginatedMeta } from "@repo/contracts";
-import type { AppLogger } from "@repo/utils";
+import { type AppLogger, UnauthorizedError } from "@repo/utils";
 import type { NextFunction, Request, Response } from "express";
-import type { JwtPayload } from "../middleware/auth.js";
+import { isJwtPayload } from "../middleware/auth.js";
 import type { AuditService } from "../services/AuditService.js";
 
 export class AdminProductController {
@@ -51,7 +51,10 @@ export class AdminProductController {
     const result = await this.facade.create(parsed.data);
     if (!result.ok) return next(result.error);
 
-    const payload = res.locals.jwtPayload as JwtPayload;
+    const payload = res.locals.jwtPayload;
+    if (!isJwtPayload(payload)) {
+      return next(new UnauthorizedError("JWT payload missing after auth", "MISSING_SESSION"));
+    }
     await this.audit.log({
       adminId: payload.sub,
       action: "create",
@@ -66,7 +69,14 @@ export class AdminProductController {
   };
 
   update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { id } = req.params as { id: string };
+    const id = req.params.id;
+    if (typeof id !== "string") {
+      res.status(400).json({
+        success: false,
+        error: { code: "VALIDATION_ERROR", message: "Missing product id" },
+      });
+      return;
+    }
     const parsed = UpdateProductSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({
@@ -79,7 +89,10 @@ export class AdminProductController {
     const result = await this.facade.update(id, parsed.data);
     if (!result.ok) return next(result.error);
 
-    const payload = res.locals.jwtPayload as JwtPayload;
+    const payload = res.locals.jwtPayload;
+    if (!isJwtPayload(payload)) {
+      return next(new UnauthorizedError("JWT payload missing after auth", "MISSING_SESSION"));
+    }
     await this.audit.log({
       adminId: payload.sub,
       action: "update",
@@ -94,11 +107,21 @@ export class AdminProductController {
   };
 
   remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { id } = req.params as { id: string };
+    const id = req.params.id;
+    if (typeof id !== "string") {
+      res.status(400).json({
+        success: false,
+        error: { code: "VALIDATION_ERROR", message: "Missing product id" },
+      });
+      return;
+    }
     const result = await this.facade.delete(id);
     if (!result.ok) return next(result.error);
 
-    const payload = res.locals.jwtPayload as JwtPayload;
+    const payload = res.locals.jwtPayload;
+    if (!isJwtPayload(payload)) {
+      return next(new UnauthorizedError("JWT payload missing after auth", "MISSING_SESSION"));
+    }
     await this.audit.log({
       adminId: payload.sub,
       action: "delete",

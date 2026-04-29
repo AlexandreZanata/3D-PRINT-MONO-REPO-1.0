@@ -32,7 +32,11 @@ See [docs/adr/0002-admin-panel-dev-api-proxy.md](../docs/adr/0002-admin-panel-de
 
 The gateway returns **403** when the admin-service rejects the request before your handler runs, usually:
 
-- **IP allowlist** (`ADMIN_ALLOWED_IPS`): the service normalizes `::ffff:127.0.0.1` to `127.0.0.1`. If you run in Docker, add the gateway container IP or set `ADMIN_ALLOWED_IPS` accordingly.
+- **IP allowlist** (`ADMIN_ALLOWED_IPS`): admin-service reads the client IP with **`trust proxy`** (`ADMIN_TRUST_PROXY_HOPS`, default `1`). The gateway sets **`X-Forwarded-For`** on `/api/v1/admin/*` to the peer that connected **to the gateway** (not the internal Docker hop). Allowlist that address (for `pnpm dev`, typically `127.0.0.1` / `::1`). Entries may be **IPv4 CIDR** (e.g. `172.16.0.0/12`) for Docker clients on `172.x.x.x`.
 - **JWT role**: the access token must include role `admin` or `super_admin`.
+
+See [ADR 0003](../docs/adr/0003-admin-ip-behind-gateway.md).
+
+If you still get **`IP_NOT_ALLOWED`** with a `172.x.x.x` address: **rebuild and restart** `admin-service` so it runs the latest code. The service **auto-appends** `172.16.0.0/12` to `ADMIN_ALLOWED_IPS` when it is set (e.g. `127.0.0.1,::1`) unless **`ADMIN_ALLOW_DOCKER_BRIDGE=0`**. To lock the allowlist manually, set `ADMIN_ALLOW_DOCKER_BRIDGE=0` and list every allowed IP/CIDR yourself.
 
 **Refresh:** `/api/v1/auth/refresh` expects a JSON body `{ "refreshToken": "..." }` (not an empty POST). The SPA stores the refresh token from login and sends it on refresh and logout.

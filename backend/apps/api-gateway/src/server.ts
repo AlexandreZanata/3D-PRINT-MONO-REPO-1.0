@@ -54,7 +54,11 @@ export function buildServer(): express.Application {
   app.use("/api/v1/auth", authRateLimit, createProxy(adminServiceUrl));
 
   // ── Admin routes ──────────────────────────────────────────────────────────
-  app.use("/api/v1/admin", adminRateLimit, createProxy(adminServiceUrl));
+  app.use(
+    "/api/v1/admin",
+    adminRateLimit,
+    createProxy(adminServiceUrl, { rewriteForwardedForAsGatewayPeer: true }),
+  );
 
   // ── Error handler ─────────────────────────────────────────────────────────
   app.use(createErrorHandler(logger));

@@ -37,6 +37,11 @@ The HTTP utilities provide correlation ID tracking, request logging, health chec
 - `anonymiseIp(ip)` — anonymises last IPv4 octet (e.g. `192.168.1.42` → `192.168.1.0`)
 - `deriveOverallStatus(checks)` — derives `"ok" | "degraded" | "down"` from check results
 
+### Networking
+- `normalizeIp(ip)` — strips the `::ffff:` IPv4-mapped prefix (e.g. `::ffff:127.0.0.1` → `127.0.0.1`) for allowlists and proxy headers
+- `matchesAllowedIpEntry(clientIp, entry)` — exact match after normalization, or IPv4 CIDR (`a.b.c.d/nn`) for ranges such as Docker `172.16.0.0/12`
+- `firstForwardedIp(value)` — first trimmed segment of an `X-Forwarded-For`-style comma list
+
 ## How to run tests
 
 ```bash

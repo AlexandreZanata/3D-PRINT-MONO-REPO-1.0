@@ -127,6 +127,12 @@ On 401 response:
 
 ---
 
+## Styling and FOUC
+
+Production builds use a **single CSS bundle** (`cssCodeSplit: false`). The root route injects **critical inline** layout and tokens before the app stylesheet, and loads **Google Fonts** asynchronously (`media="print"` → `all` on load) so Tailwind can paint first. See [ADR 0004](../docs/adr/0004-storefront-css-loading.md).
+
+---
+
 ## SSE integration
 
 ```

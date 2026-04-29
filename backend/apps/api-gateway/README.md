@@ -15,8 +15,10 @@ No exported types — this is a runnable application.
 
 ## How to run tests
 
+`@repo/utils` must be built first (tests import `normalizeIp` from its `dist/`).
+
 ```bash
-pnpm --filter @repo/api-gateway test
+pnpm --filter @repo/utils build && pnpm --filter @repo/api-gateway test
 ```
 
 ## Dependencies map

@@ -5,7 +5,7 @@ import { ProductCarousel } from "@/molecules/ProductCarousel/ProductCarousel";
 import { ProductCard } from "@/molecules/ProductCard/ProductCard";
 import { useCart } from "@/features/cart/useCart";
 import { useProducts } from "@/features/products/hooks/useProducts";
-import { fetchProductBySlug } from "@/api/products.api";
+import { fetchProductById, fetchProductBySlug } from "@/api/products.api";
 
 function formatPrice(amount: number): string {
   return new Intl.NumberFormat("en-US", {

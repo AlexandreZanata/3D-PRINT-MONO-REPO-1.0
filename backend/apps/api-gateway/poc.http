@@ -1,0 +1,14 @@
+### api-gateway — smoke admin allowlist via X-Forwarded-For (set by gateway from peer)
+### Run gateway + admin-service; replace @token after login.
+@base = http://localhost:3000
+@token = YOUR_ACCESS_JWT
+
+GET {{base}}/api/v1/admin/products?page=1&limit=50
+Authorization: Bearer {{token}}
+
+###
+### Login (returns accessToken) — use body from your seed (e.g. admin@example.com)
+POST {{base}}/api/v1/auth/login
+Content-Type: application/json
+
+{"email":"admin@example.com","password":"Admin123!"}

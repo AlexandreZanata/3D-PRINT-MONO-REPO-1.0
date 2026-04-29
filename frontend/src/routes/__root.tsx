@@ -1,4 +1,11 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  Outlet,
+  Link,
+  createRootRoute,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
+import type { SyntheticEvent } from "react";
 // Import CSS normally — TanStack Start's dev-server plugin crawls the module
 // graph and collects all CSS imports into /@tanstack-start/styles.css, which
 // is injected as a <link rel="stylesheet"> in the SSR HTML. This is the
@@ -10,6 +17,10 @@ import { MobileTabBar } from "@/organisms/MobileTabBar/MobileTabBar";
 
 const GOOGLE_FONTS_URL =
   "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&display=swap";
+
+function activateFontStylesheet(e: SyntheticEvent<HTMLLinkElement>): void {
+  e.currentTarget.media = "all";
+}
 
 function NotFoundComponent() {
   return (
@@ -47,12 +58,8 @@ export const Route = createRootRoute({
       },
     ],
     links: [
-      // Preconnect for faster font loading
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      // Google Fonts — loaded via <link> because globals.css uses @import "tailwindcss"
-      // which must come first; adding @import url() after it violates PostCSS ordering.
-      { rel: "stylesheet", href: GOOGLE_FONTS_URL },
     ],
   }),
   shellComponent: RootShell,
@@ -64,12 +71,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <HeadContent />
         {/*
-          Critical inline styles — applied before any external stylesheet loads.
-          Prevents FOUC (flash of unstyled content) during SSR hydration.
-          Only includes the minimum needed: background color and font stack.
-          Full design tokens are in globals.css loaded via HeadContent.
+          Critical inline styles first so base colors/layout exist before
+          HeadContent injects the app stylesheet and Google Fonts (async below).
         */}
         <style dangerouslySetInnerHTML={{ __html: `
           :root {
@@ -83,7 +87,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
             margin: 0;
             font-family: ui-sans-serif, system-ui, sans-serif;
           }
+          .forma-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+          }
         `}} />
+        <HeadContent />
+        <link rel="stylesheet" href={GOOGLE_FONTS_URL} media="print" onLoad={activateFontStylesheet} />
+        <noscript>
+          <link rel="stylesheet" href={GOOGLE_FONTS_URL} />
+        </noscript>
       </head>
       <body>
         {children}
@@ -96,7 +110,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AppProviders>
-      <div className="min-h-screen flex flex-col">
+      <div className="forma-shell min-h-screen flex flex-col">
         <SiteHeader />
         <main className="flex-1 pb-20 md:pb-0">
           <Outlet />

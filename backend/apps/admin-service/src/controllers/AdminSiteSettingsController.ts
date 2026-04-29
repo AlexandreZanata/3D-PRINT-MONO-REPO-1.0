@@ -2,9 +2,9 @@
 import type { SiteSettingsDTO, SiteSettingsFacade } from "@repo/application";
 import type { ApiSuccess } from "@repo/contracts";
 import { UpdateSiteSettingsSchema } from "@repo/contracts";
-import type { AppLogger } from "@repo/utils";
+import { type AppLogger, UnauthorizedError } from "@repo/utils";
 import type { NextFunction, Request, Response } from "express";
-import type { JwtPayload } from "../middleware/auth.js";
+import { isJwtPayload } from "../middleware/auth.js";
 import type { AuditService } from "../services/AuditService.js";
 
 export class AdminSiteSettingsController {
@@ -36,7 +36,10 @@ export class AdminSiteSettingsController {
     const result = await this.facade.update(parsed.data.settings);
     if (!result.ok) return next(result.error);
 
-    const payload = res.locals.jwtPayload as JwtPayload;
+    const payload = res.locals.jwtPayload;
+    if (!isJwtPayload(payload)) {
+      return next(new UnauthorizedError("JWT payload missing after auth", "MISSING_SESSION"));
+    }
     await this.audit.log({
       adminId: payload.sub,
       action: "update",

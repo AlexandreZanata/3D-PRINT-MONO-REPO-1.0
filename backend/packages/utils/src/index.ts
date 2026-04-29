@@ -27,3 +27,6 @@ export type {
   CheckFn,
   ApiErrorBody,
 } from "./http/index.js";
+export { normalizeIp } from "./net/normalize-ip.js";
+export { matchesAllowedIpEntry } from "./net/allowed-ip-entry.js";
+export { firstForwardedIp } from "./net/first-forwarded-ip.js";
