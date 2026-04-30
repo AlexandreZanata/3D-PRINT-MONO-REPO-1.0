@@ -14,6 +14,7 @@ export {
   LoginSchema,
   RefreshTokenSchema,
   PaginationSchema,
+  isPublicImageRef,
 } from "./schemas/index.js";
 export type {
   CreateProductDTO,

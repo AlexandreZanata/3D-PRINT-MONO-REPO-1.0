@@ -1,10 +1,8 @@
 /**
  * Resolves the Axios base URL for the admin SPA.
  *
- * In development, always use same-origin (empty string) so requests hit the Vite
- * dev server and the proxy forwards `/api/*` to the gateway. If `VITE_API_BASE_URL`
- * pointed at `http://localhost:3000`, the browser would call the API directly and
- * trigger CORS preflight unless the backend allows origin `http://localhost:8082`.
+ * In development, keep same-origin so Vite proxy forwards `/api/*` to backend
+ * and avoids browser CORS preflight issues.
  */
 export function resolveApiBaseUrlFromEnv(env: {
   readonly DEV: boolean;

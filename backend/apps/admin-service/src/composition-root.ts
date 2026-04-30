@@ -1,6 +1,7 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 import {
   AuthFacade,
   CreateProductUseCase,
@@ -32,7 +33,9 @@ import { AdminProductController } from "./controllers/AdminProductController.js"
 import { AdminSiteSettingsController } from "./controllers/AdminSiteSettingsController.js";
 import { AuditLogController } from "./controllers/AuditLogController.js";
 import { AuthController } from "./controllers/AuthController.js";
+import { UploadController } from "./controllers/UploadController.js";
 import { AuditService } from "./services/AuditService.js";
+import { createImageUploadSingle } from "./uploads/createImageUploadSingle.js";
 
 function getEnv(key: string): string {
   const val = process.env[key];
@@ -45,6 +48,9 @@ export interface CompositionRoot {
   readonly productController: AdminProductController;
   readonly siteSettingsController: AdminSiteSettingsController;
   readonly auditLogController: AuditLogController;
+  readonly uploadDirAbs: string;
+  readonly uploadFileMiddleware: ReturnType<typeof createImageUploadSingle>;
+  readonly uploadController: UploadController;
   readonly close: () => Promise<void>;
 }
 
@@ -123,6 +129,13 @@ export async function buildCompositionRoot(): Promise<CompositionRoot> {
 
   const auditService = new AuditService(auditLogRepo, logger);
 
+  const uploadDirAbs = path.resolve(
+    process.env.ADMIN_UPLOAD_DIR ?? path.join(process.cwd(), "data", "uploads"),
+  );
+  mkdirSync(uploadDirAbs, { recursive: true });
+  const uploadFileMiddleware = createImageUploadSingle(uploadDirAbs);
+  const uploadController = new UploadController();
+
   return {
     authController: new AuthController(authFacade, logger),
     productController: new AdminProductController(productFacade, auditService, logger),
@@ -132,6 +145,9 @@ export async function buildCompositionRoot(): Promise<CompositionRoot> {
       logger,
     ),
     auditLogController: new AuditLogController(auditLogRepo, logger),
+    uploadDirAbs,
+    uploadFileMiddleware,
+    uploadController,
     close: closeDb,
   };
 }

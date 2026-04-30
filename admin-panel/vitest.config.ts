@@ -3,8 +3,9 @@ import { resolve } from "node:path";
 
 export default defineConfig({
   test: {
+    setupFiles: ["./vitest.setup.ts"],
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     globals: true,
     pool: "threads",
     poolOptions: {

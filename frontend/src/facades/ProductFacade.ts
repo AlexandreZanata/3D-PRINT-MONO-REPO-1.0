@@ -37,6 +37,14 @@ export interface ApiWhatsappResponse {
 
 /** Maps a raw API product to the frontend Product domain type. */
 export function toProduct(raw: ApiProduct): Product {
+  const imageList = raw.images ?? [];
+  const images =
+    imageList.length > 0
+      ? imageList
+      : raw.imageUrl !== null && raw.imageUrl.length > 0
+        ? [raw.imageUrl]
+        : [];
+
   return {
     id: raw.id,
     name: raw.name,
@@ -50,7 +58,7 @@ export function toProduct(raw: ApiProduct): Product {
     stock: typeof raw.stock === "string" ? parseInt(raw.stock, 10) : raw.stock,
     whatsappNumber: raw.whatsappNumber,
     imageUrl: raw.imageUrl,
-    images: raw.images ?? [],
+    images,
     isActive: raw.isActive,
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,

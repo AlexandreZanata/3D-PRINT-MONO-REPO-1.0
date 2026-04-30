@@ -21,6 +21,12 @@ Requires the API (e.g. api-gateway) running for `/api` — same as [frontend](..
 | `pnpm test`   | Vitest                         |
 | `pnpm lint`   | ESLint                         |
 
+## Image uploads
+
+`POST /api/v1/admin/uploads` (JWT + CSRF) accepts `FormData` field `file`. The client helper is `adminUploadImage` in `src/api/uploads.api.ts`. Store the returned path (for example `/api/v1/uploads/…`) on products or hero settings; the dev server proxies `/api`, so previews use the same origin as the admin app.
+
+If uploads return **404** with an HTML body, the **admin-service** process is usually serving an outdated build: use `pnpm dev` inside `@repo/admin-service` (runs `tsx watch`) or run `pnpm build` there before `node dist/index.js`. Confirm **api-gateway** `ADMIN_SERVICE_URL` is `http://localhost:3002`, not the gateway itself.
+
 ## Environment
 
 - **`pnpm dev`:** Do **not** set `VITE_API_BASE_URL` to `http://localhost:3000`. The browser must call the same origin (`http://localhost:8082`); Vite proxies `/api` to the gateway. Pointing Axios at port 3000 directly causes **CORS** (different origins) unless the backend whitelists `http://localhost:8082`.

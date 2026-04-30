@@ -1,0 +1,29 @@
+### Admin service — manual HTTP checks (VS Code REST Client / IntelliJ)
+### Replace {{adminUrl}}, {{accessToken}}, {{productId}}.
+
+@adminUrl = http://localhost:3002
+@accessToken = YOUR_ACCESS_JWT
+@productId = YOUR_PRODUCT_UUID
+
+### Health (no auth)
+GET {{adminUrl}}/health
+
+### Get product by id (requires IP allowlist + Bearer admin JWT)
+GET {{adminUrl}}/api/v1/admin/products/{{productId}}
+Authorization: Bearer {{accessToken}}
+
+### Upload image (field name must be `file`; JPEG/PNG/WebP ≤ 5 MiB)
+POST {{adminUrl}}/api/v1/admin/uploads
+Authorization: Bearer {{accessToken}}
+X-CSRF-Token: YOUR_CSRF_FROM_LOGIN_FLOW
+Content-Type: multipart/form-data; boundary=----pocBoundary
+
+------pocBoundary
+Content-Disposition: form-data; name="file"; filename="poc.png"
+Content-Type: image/png
+
+< ./path/to/local.png
+------pocBoundary--
+
+### Public file (after upload, use returned `url` path)
+GET {{adminUrl}}/api/v1/uploads/FILENAME_FROM_UPLOAD_RESPONSE.jpg

@@ -39,11 +39,18 @@ export function buildServer(root: CompositionRoot): express.Application {
   };
   app.get("/health", createHealthHandler(healthDeps));
 
+  app.use(
+    "/api/v1/uploads",
+    express.static(root.uploadDirAbs, { fallthrough: false, maxAge: "1d", index: false }),
+  );
+
   const apiRouter = buildAdminRouter(
     root.authController,
     root.productController,
     root.siteSettingsController,
     root.auditLogController,
+    root.uploadFileMiddleware,
+    root.uploadController,
   );
   app.use("/api/v1", apiRouter);
 

@@ -1,6 +1,24 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
 import { z } from "zod";
+import { isPublicImageRef } from "./image-ref.js";
 import { PaginationSchema } from "./pagination.schema.js";
+
+const optionalImageUrlField = z
+  .union([z.string(), z.null()])
+  .optional()
+  .transform((v) => {
+    if (v === undefined) return undefined;
+    if (v === null) return null;
+    const t = v.trim();
+    return t.length === 0 ? null : t;
+  })
+  .refine((v) => v === undefined || v === null || isPublicImageRef(v), {
+    message: "Invalid image URL or upload path",
+  });
+
+const optionalImageList = z
+  .array(z.string().refine(isPublicImageRef, { message: "Invalid image URL or upload path" }))
+  .optional();
 
 export const CreateProductSchema = z.object({
   name: z.string().min(1).max(200).trim(),
@@ -13,8 +31,8 @@ export const CreateProductSchema = z.object({
   price: z.number().nonnegative(),
   stock: z.number().int().nonnegative(),
   whatsappNumber: z.string().regex(/^\+?\d{7,15}$/, "Must be a valid E.164 phone number"),
-  imageUrl: z.string().url().nullable().optional(),
-  images: z.array(z.string().url()).optional(),
+  imageUrl: optionalImageUrlField,
+  images: optionalImageList,
 });
 
 export type CreateProductDTO = z.infer<typeof CreateProductSchema>;
@@ -33,8 +51,8 @@ export const UpdateProductSchema = z.object({
     .string()
     .regex(/^\+?\d{7,15}$/, "Must be a valid E.164 phone number")
     .optional(),
-  imageUrl: z.string().url().nullable().optional(),
-  images: z.array(z.string().url()).optional(),
+  imageUrl: optionalImageUrlField,
+  images: optionalImageList,
   isActive: z.boolean().optional(),
 });
 

@@ -14,6 +14,23 @@ export class AdminProductController {
     private readonly logger: AppLogger,
   ) {}
 
+  getById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const id = req.params.id;
+    if (typeof id !== "string") {
+      res.status(400).json({
+        success: false,
+        error: { code: "VALIDATION_ERROR", message: "Missing product id" },
+      });
+      return;
+    }
+
+    const result = await this.facade.getById(id);
+    if (!result.ok) return next(result.error);
+
+    const body: ApiSuccess<ProductDTO> = { success: true, data: result.value };
+    res.status(200).json(body);
+  };
+
   list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = ListProductsQuerySchema.safeParse(req.query);
     if (!parsed.success) {

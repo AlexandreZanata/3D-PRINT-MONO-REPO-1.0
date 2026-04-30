@@ -46,7 +46,7 @@ export function ProductForm({
   return (
     <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-5" noValidate>
       <ProductFormCoreFields register={register} errors={errors} />
-      <ProductFormImages register={register} fields={fields} append={append} remove={remove} />
+      <ProductFormImages control={control} fields={fields} append={append} remove={remove} />
 
       <div className="flex items-center gap-2">
         <input

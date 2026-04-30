@@ -12,6 +12,8 @@ export const ENDPOINTS = {
   ADMIN_PRODUCT_DELETE: (id: string) => `/api/v1/admin/products/${id}`,
   ADMIN_PRODUCT_BY_ID: (id: string) => `/api/v1/admin/products/${id}`,
 
+  ADMIN_UPLOAD: "/api/v1/admin/uploads",
+
   ADMIN_AUDIT_LOGS: "/api/v1/admin/audit-logs",
   ADMIN_SITE_SETTINGS: "/api/v1/admin/site-settings",
 } as const;

@@ -164,6 +164,7 @@ services:
     volumes:
       - ../secrets/jwt.private.pem:/run/secrets/jwt_private_key:ro
       - ../secrets/jwt.public.pem:/run/secrets/jwt_public_key:ro
+      - admin_uploads:/data/uploads
     environment:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
@@ -181,6 +182,7 @@ services:
       # 172.16.0.0/12 = RFC1918 172.16–172.31.x (typical Docker bridge clients)
       ADMIN_ALLOWED_IPS: ${ADMIN_ALLOWED_IPS:-127.0.0.1,::1,::ffff:127.0.0.1,172.16.0.0/12}
       ADMIN_TRUST_PROXY_HOPS: ${ADMIN_TRUST_PROXY_HOPS:-1}
+      ADMIN_UPLOAD_DIR: /data/uploads
       ADMIN_SERVICE_PORT: 3002
     ports:
       - "${ADMIN_SERVICE_PORT:-3002}:3002"
@@ -255,3 +257,4 @@ volumes:
   postgres_data:
   redis_data:
   rabbitmq_data:
+  admin_uploads:

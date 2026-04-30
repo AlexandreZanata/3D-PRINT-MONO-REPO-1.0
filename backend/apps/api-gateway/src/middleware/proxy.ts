@@ -4,6 +4,7 @@ import { URL } from "node:url";
 // @max-lines 200 — this is enforced by the lint pipeline.
 import type { Request, Response } from "express";
 import { withAdminUpstreamForwardedFor } from "./admin-proxy-headers.js";
+import { resolveProxyBodyMode } from "./resolve-proxy-body-mode.js";
 
 export type CreateProxyOptions = {
   /** When true, sets `X-Forwarded-For` to the gateway TCP peer (for admin-service allowlist). */
@@ -12,8 +13,8 @@ export type CreateProxyOptions = {
 
 /**
  * Creates a reverse-proxy handler that forwards requests to a downstream service.
- * Uses req.originalUrl to preserve the full path. For POST/PUT/PATCH, serializes
- * req.body back to JSON (since express.json() already consumed the stream).
+ * Uses req.originalUrl to preserve the full path. JSON bodies are re-serialized from
+ * `req.body`; `multipart/form-data` is streamed from the incoming request.
  */
 export function createProxy(targetBase: string, options?: CreateProxyOptions) {
   return (req: Request, res: Response): void => {
@@ -23,8 +24,8 @@ export function createProxy(targetBase: string, options?: CreateProxyOptions) {
     const correlationId =
       typeof res.locals.correlationId === "string" ? res.locals.correlationId : undefined;
 
-    const hasBody = ["POST", "PUT", "PATCH"].includes(req.method);
-    const bodyData = hasBody && req.body ? JSON.stringify(req.body) : undefined;
+    const bodyMode = resolveProxyBodyMode(req.method, req.headers["content-type"], req.body);
+    const bodyData = bodyMode === "json-stringify" ? JSON.stringify(req.body) : undefined;
 
     const incomingHeaders =
       options?.rewriteForwardedForAsGatewayPeer === true
@@ -58,11 +59,15 @@ export function createProxy(targetBase: string, options?: CreateProxyOptions) {
       }
     });
 
-    if (bodyData) {
+    if (bodyMode === "multipart-pipe") {
+      req.pipe(proxyReq);
+      return;
+    }
+    if (bodyData !== undefined) {
       proxyReq.write(bodyData);
       proxyReq.end();
-    } else {
-      proxyReq.end();
+      return;
     }
+    proxyReq.end();
   };
 }

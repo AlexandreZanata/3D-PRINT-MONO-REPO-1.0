@@ -64,6 +64,9 @@ COPY --from=builder /repo/packages/utils/dist ./packages/utils/dist
 COPY --from=builder /repo/packages/infra/db-adapter/dist ./packages/infra/db-adapter/dist
 COPY --from=builder /repo/packages/infra/cache-adapter/dist ./packages/infra/cache-adapter/dist
 
+# Ensure upload dir is writable when running as non-root `node`.
+RUN mkdir -p /data/uploads && chown -R node:node /data/uploads
+
 WORKDIR /repo/apps/admin-service
 
 USER node

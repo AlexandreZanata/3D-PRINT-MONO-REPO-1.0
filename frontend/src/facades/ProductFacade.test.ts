@@ -69,6 +69,16 @@ describe("toProduct", () => {
     expect(result.images).toEqual(images);
   });
 
+  it("falls back to imageUrl when gallery images are empty", () => {
+    const result = toProduct(
+      makeApiProduct({
+        imageUrl: "/api/v1/uploads/hero.jpg",
+        images: [],
+      }),
+    );
+    expect(result.images).toEqual(["/api/v1/uploads/hero.jpg"]);
+  });
+
   it("defaults images to empty array when not provided", () => {
     // Simulate old API response without images field
     const raw = makeApiProduct();

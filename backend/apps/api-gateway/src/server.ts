@@ -53,6 +53,9 @@ export function buildServer(): express.Application {
   // ── Auth routes ───────────────────────────────────────────────────────────
   app.use("/api/v1/auth", authRateLimit, createProxy(adminServiceUrl));
 
+  // ── Public uploaded images (served by admin-service static dir) ───────────
+  app.use("/api/v1/uploads", publicRateLimit, createProxy(adminServiceUrl));
+
   // ── Admin routes ──────────────────────────────────────────────────────────
   app.use(
     "/api/v1/admin",

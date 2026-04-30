@@ -1,4 +1,5 @@
 // @max-lines 200 — this is enforced by the lint pipeline.
+export { isPublicImageRef } from "./image-ref.js";
 export {
   CreateProductSchema,
   UpdateProductSchema,

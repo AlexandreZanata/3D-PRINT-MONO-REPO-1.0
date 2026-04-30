@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useAdminSiteSettings, useUpdateSiteSettings } from "@/features/admin/hooks/useAdminSiteSettings";
 import { settingsFormToRecord } from "@/lib/settingsFormToRecord";
+import { ImageUrlInputWithUpload } from "@/organisms/ImageUrlInputWithUpload/ImageUrlInputWithUpload";
 import { SiteSettingsField } from "./SiteSettingsField";
 import { SiteSettingsFormSection } from "./SiteSettingsFormSection";
 import {
@@ -14,7 +15,7 @@ import type { SiteSettingsFormValues } from "./siteSettingsEditor.types";
 export function SiteSettingsEditor() {
   const { data: settings, isLoading } = useAdminSiteSettings();
   const updateMutation = useUpdateSiteSettings();
-  const { register, handleSubmit, reset } = useForm<SiteSettingsFormValues>();
+  const { register, handleSubmit, reset, control } = useForm<SiteSettingsFormValues>();
 
   useEffect(() => {
     if (settings) {
@@ -101,13 +102,21 @@ export function SiteSettingsEditor() {
               </SiteSettingsField>
             </div>
             <div className="space-y-5">
-              <SiteSettingsField label="Hero image URL" id="hero.imageUrl">
-                <input
-                  id="hero.imageUrl"
-                  type="url"
-                  {...register("hero.imageUrl")}
-                  className={SITE_SETTINGS_INPUT_CLASS}
-                  placeholder="https://…"
+              <SiteSettingsField label="Hero image" id="hero.imageUrl">
+                <Controller
+                  name="hero.imageUrl"
+                  control={control}
+                  render={({ field }) => (
+                    <ImageUrlInputWithUpload
+                      id="hero.imageUrl"
+                      hideLabel
+                      ariaLabel="Hero image URL or upload"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      disabled={updateMutation.isPending}
+                    />
+                  )}
                 />
               </SiteSettingsField>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
